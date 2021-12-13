@@ -1,4 +1,4 @@
-# alg-demo
+# WashU-CSE546-Chan's Algorithm Demo
 
 ## Project setup
 ```
