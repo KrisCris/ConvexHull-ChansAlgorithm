@@ -1,4 +1,4 @@
-export default class Vertex {
+class Vertex {
     #xPos;
     #yPos;
     #predecessor;
@@ -40,10 +40,12 @@ export default class Vertex {
         return (p.xPos*q.yPos+q.xPos*r.yPos+r.xPos*p.yPos) - (p.xPos*r.yPos+q.xPos*p.yPos+r.xPos*q.yPos)
     }
 
-    // orient(v) {
-    //     return (this.#xPos * this.#predecessor.yPos + v.xPos * this.#yPos + v.yPos * this.#predecessor.xPos) -
-    //         (v.yPos * this.#xPos + this.#yPos * this.#predecessor.xPos + v.xPos * this.#predecessor.yPos)
-    // }
+    static degree(p, q, r){
+        let a = [p.xPos-q.xPos, p.yPos-q.yPos]
+        let b = [r.xPos-q.xPos, r.yPos-q.yPos]
+        let cos = (a[0]*b[0]+a[1]*b[1])/(Math.sqrt(Math.pow(a[0],2)+Math.pow(a[1],2))*Math.sqrt(Math.pow(b[0],2)+Math.pow(b[1],2)))
+        return Math.acos(cos)
+    }
 }
 
-// module.exports.Vertex = Vertex;
+module.exports = Vertex
