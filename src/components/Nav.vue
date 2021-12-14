@@ -1,6 +1,6 @@
 <template>
-    <div id="nav" class="top">
-        <router-link :to="{ name: 'ChansAlg' }">Chan's Algorithm</router-link>
+    <div id="nav">
+        <router-link :to="{ name: 'ChanAlg' }">Chan's Algorithm</router-link>
         <router-link :to="{ name: 'Test' }">Test </router-link>
     </div>
 </template>
@@ -16,10 +16,7 @@ export default {
 
 <style>
 #nav {
-    /* border-style: solid;
-    border-color: #42b983;
-    border-width: 0rem 0rem 0.05rem 0rem; */
-    padding: 1.5rem 0rem;
+    padding: 3rem;
 }
 #nav span{
     color:white;
@@ -30,7 +27,7 @@ export default {
     text-decoration: none;
     padding: 1rem 2rem;
     border-radius: 1rem;
-    margin: 0rem 1rem;
+    margin: 1rem;
     background: rgb(48, 45, 45);
     transition: all 0.3s ease-in-out;
 }
@@ -43,10 +40,5 @@ export default {
     filter: brightness(120%);
     transition: all 0.3s ease-in-out;
     box-shadow: #2c2c2c 5px 5px 1rem;
-}
-.top{
-    width: 100%;
-    height:1.1rem;
-    flex:none;
 }
 </style>
