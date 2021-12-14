@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Test from '../views/Test.vue'
-import ChanAlg from '../views/ChanAlg.vue'
+import ChansAlg from '../views/ChansAlg.vue'
 
 const routes = [
   {
@@ -9,13 +9,13 @@ const routes = [
     component: Test
   },
   {
-    path: '/ChanAlg',
-    name: 'ChanAlg',
-    component: ChanAlg
+    path: '/ChansAlg',
+    name: 'ChansAlg',
+    component: ChansAlg
   },
   {
     path: '/',
-    redirect: '/ChanAlg'
+    redirect: '/ChansAlg'
   },
 ]
 
