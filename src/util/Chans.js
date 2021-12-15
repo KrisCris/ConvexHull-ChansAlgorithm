@@ -1,6 +1,5 @@
 import Vertex from "./Vertex.js";
-// const Vertex = require('./Vertex').Vertex
-class Chans {
+export default class Chans {
 
     static GrahamScan(vertices) {
         let xSorted = vertices.sort(Vertex.xSort);

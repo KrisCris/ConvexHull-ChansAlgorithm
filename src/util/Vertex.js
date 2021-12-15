@@ -1,27 +1,11 @@
 export default class Vertex {
-    #xPos;
-    #yPos;
-    #predecessor;
+    xPos;
+    yPos;
+    predecessor;
 
     constructor(xPos, yPos) {
-        this.#xPos = xPos;
-        this.#yPos = yPos;
-    }
-
-    get xPos() {
-        return this.#xPos
-    }
-
-    get yPos() {
-        return this.#yPos
-    }
-
-    get predecessor() {
-        return this.#predecessor
-    }
-
-    set predecessor(vertex) {
-        this.#predecessor = vertex
+        this.xPos = xPos;
+        this.yPos = yPos;
     }
 
     static xSort(v1, v2) {
