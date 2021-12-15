@@ -26,10 +26,11 @@ export default {
     methods:{
         addPoint(e){
             this.vertices.push(new Vertex(e.offsetX, e.offsetY))
-            console.log(this.vertices)
+            // console.log(this.vertices)
         },
         grahamScan(){
             this.edges = Chans.GrahamScan(this.vertices).edges
+            console.log(this.edges)
         }
     },
     mounted(){
