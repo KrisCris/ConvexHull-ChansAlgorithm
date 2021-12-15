@@ -34,7 +34,7 @@ export default class Chans {
                 for (let i = 1; i < L.length; i++) {
                     edges.push(new Edge(L[i - 1], L[i]))
                 }
-                return { vertices: L, edges: edges }
+                return { vertices: L, edges: edges, subCH: this.subCH, subP:this.subP, r: Math.ceil(this.P.length / m)}
             }
         }
     }
@@ -65,25 +65,36 @@ export default class Chans {
         for (let k = 1; k <= m; k++) {
             this.eachMaxAngleV.push([])
             for (let i = 0; i < r; i++) {
-                this.eachMaxAngleV[k - 1].push(this.bSearch(this.subCH[i].vertices, 0, this.subCH[i].vertices.length-1, pk[k - 1], pk[k]))
+                let l = [...this.subCH[i].vertices]
+                let idx = l.indexOf(pk[k - 1])
+                if (idx > -1) {
+                    l.splice(idx, 1);
+                }
+                idx = l.indexOf(pk[k])
+                if (idx > -1) {
+                    l.splice(idx, 1);
+                }
+                if(l.length<1) continue
+                this.eachMaxAngleV[k - 1].push(this.bSearch(l, 0, l.length - 1, pk[k - 1], pk[k]))
+                // this.eachMaxAngleV[k - 1].push(this.bSearch(this.subCH[i].vertices, 0, this.subCH[i].vertices.length - 1, pk[k - 1], pk[k]))
+                // this.eachMaxAngleV[k - 1].push(this.lSearch(l, pk[k - 1], pk[k]))
+
+
             }
-            console.log(this.eachMaxAngleV[k - 1])
+            // console.log(this.eachMaxAngleV[k - 1])
             let angle = Number.MIN_SAFE_INTEGER
             pk.push(this.eachMaxAngleV[k - 1][0])
             for (let d of this.eachMaxAngleV[k - 1]) {
                 if (Vertex.degree(pk[k - 1], pk[k], d) > angle) {
+                    angle = Vertex.degree(pk[k - 1], pk[k], d)
                     pk[k + 1] = d
                 }
             }
             if (pk[k + 1] === pk[1]) {
-                pk = pk.slice(1, pk.length - 2)
+                pk = pk.slice(1, pk.length)
                 break
             }
         }
-        if(pk[0].xPos<0){
-            pk = pk.slice(1, pk.length - 1)
-        }
-
 
         if (pk != null) {
             let edges = []
@@ -116,7 +127,7 @@ export default class Chans {
         for (let i = 0; i < r; i++) {
             this.subP.push(this.P.slice(m * i, m * (i + 1)))
         }
-
+        this.subCH = []
         // Compute CH for each Pi
         for (let p of this.subP) {
             this.subCH.push(this.GrahamScan(p))
@@ -180,23 +191,34 @@ export default class Chans {
         for (let k = 1; k <= m; k++) {
             this.eachMaxAngleV.push([])
             for (let i = 0; i < r; i++) {
-                this.eachMaxAngleV[k - 1].push(this.bSearch(this.subCH[i].vertices, 0, this.subCH[i].vertices.length-1, pk[k - 1], pk[k]))
+                let l = [...this.subCH[i].vertices]
+                let idx = l.indexOf(pk[k - 1])
+                if (idx > -1) {
+                    l.splice(idx, 1);
+                }
+                idx = l.indexOf(pk[k])
+                if (idx > -1) {
+                    l.splice(idx, 1);
+                }
+                if(l.length<1) continue
+                this.eachMaxAngleV[k - 1].push(this.bSearch(l, 0, l.length - 1, pk[k - 1], pk[k]))
+                // this.eachMaxAngleV[k - 1].push(this.lSearch(l, pk[k - 1], pk[k]))
+
+                // this.eachMaxAngleV[k - 1].push(this.bSearch(this.subCH[i].vertices, 0, this.subCH[i].vertices.length-1, pk[k - 1], pk[k]))
             }
             let angle = Number.MIN_SAFE_INTEGER
             pk.push(this.eachMaxAngleV[k - 1][0])
             for (let d of this.eachMaxAngleV[k - 1]) {
                 if (Vertex.degree(pk[k - 1], pk[k], d) > angle) {
+                    angle = Vertex.degree(pk[k - 1], pk[k], d)
                     pk[k + 1] = d
                 }
             }
             if (pk[k + 1] === pk[1]) {
-                return pk.slice(1, pk.length - 2)
+                return pk.slice(1, pk.length)
             }
         }
         // debug purpose
-        if(r == 1){
-            return pk.slice(1, pk.length - 2)
-        }
         return null
     }
 
@@ -228,6 +250,18 @@ export default class Chans {
         }
 
     };
+
+    lSearch(P, a, b){
+        let max = undefined
+        let maxAngle = Number.MIN_SAFE_INTEGER
+        for(let v of P){
+            if(Vertex.degree(a,b,v) >= maxAngle){
+                maxAngle = Vertex.degree(a,b,v)
+                max = v
+            }
+        }
+        return max
+    }
 
     // to be removed
     test() {

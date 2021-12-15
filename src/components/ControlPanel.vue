@@ -1,6 +1,7 @@
 <template>
     <div class="ControlPanel">
-        <button @click="chans">Chans of m</button>
+        <button @click="chans">Chans</button>
+        <button @click="chansM">Chans-m</button>
         <button @click="maxAngle">maxAngleEdge?</button>
         <button @click="partialGH">BuildPartialGH</button><br>
         <span style="color:white">m:</span>
@@ -14,6 +15,9 @@ export default {
     methods: {
         chans() {
             this.$store.dispatch("chans");
+        },
+        chansM(){
+            this.$store.dispatch("chansM");
         },
         maxAngle() {
             this.$store.commit("maxAngle");

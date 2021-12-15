@@ -3,7 +3,7 @@ export default class Edge {
     end;
     color="#74ff99";
 
-    constructor(begin, end, color="#ffffffd2") {
+    constructor(begin, end, color="#000000") {
         this.begin = begin;
         this.end = end;
         this.color = color
