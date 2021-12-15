@@ -1,9 +1,42 @@
 import Vertex from "./Vertex.js";
 import Edge from './Edge.js'
 export default class Chans {
+    #P;
+    #subP = [];
+    #subCH = [];
 
-    static GrahamScan(vertices) {
-        let xSorted = vertices.sort(Vertex.xSort);
+    constructor(P){
+        this.#P = P
+    }
+    Hull(P) {
+
+        for (let t = 0; true; t++) {
+            let m = Math.min(Math.pow(2,Math.pow(2,t)), P.length)
+            let L = this.PartialHull(P, m)
+                return L
+            if(L != false){
+            }
+        }
+    }
+
+    PartialHull(m) {
+        let r = Math.ceil(this.#P.length/m)
+        // Divide P into P1, P2, ... Pr
+
+        this.#subP = []
+        for(let i = 0; i < r; i++){
+            this.#subP.push(this.#P.slice(m*i, m*(i+1)))
+        }
+
+        // Compute CH for each Pi
+        for(let p of this.#subP){
+            this.#subCH.push(this.GrahamScan(p))
+        }
+
+        // JarvisMarch
+    }
+    GrahamScan(P) {
+        let xSorted = P.sort(Vertex.xSort);
 
         // Compute the lower hull
         let chLower = [xSorted[0], xSorted[1]]
@@ -36,8 +69,45 @@ export default class Chans {
 
         return { vertices: chLower.concat(chUpper), edges: edges }
     }
-
+	
+	
     JarvisMarch() {
 
     }
 }
+
+function bSearch(P, i, j, a, b) {
+    if (i==j) 
+        return P[i];
+    if (Vertex.degree(a, b, P[i]) > Vertex.degree(a, b, P[j])) {
+        if (Vertex.degree(a, b, P[Math.floor((i+j)/2)]) < Vertex.degree(a, b, P[j]))
+            return bSearch(P, i, Math.floor((i+j)/2), a, b);
+        else if (Vertex.degree(a, b, P[Math.floor((i+j)/2 + 1)]) > Vertex.degree(a, b, P[Math.floor((i+j)/2)]))
+            return bSearch(P, Math.floor((i+j)/2) + 1, j, a, b);
+        else if (Vertex.degree(a, b, P[Math.floor((i+j)/2 + 1)]) == Vertex.degree(a, b, P[Math.floor((i+j)/2)]))
+            return P[Math.floor((i+j)/2)];
+        else return bSearch(P, i, Math.floor((i + j)/2), a, b);
+    }
+    else {
+        if (Vertex.degree(a, b, P[Math.floor((i+j)/2)]) < Vertex.degree(a, b, P[j]))
+            return bSearch(P, Math.floor((i+j)/2) + 1, j, a, b);
+        else if (Vertex.degree(a, b, P[Math.floor((i+j)/2 + 1)]) > Vertex.degree(a, b, P[Math.floor((i+j)/2)]))
+            return bSearch(P, Math.floor((i+j)/2) + 1, j, a, b);
+        else if (Vertex.degree(a, b, P[Math.floor((i+j)/2 + 1)]) == Vertex.degree(a, b, P[Math.floor((i+j)/2)]))
+            return P[Math.floor((i+j)/2)];
+        else return bSearch(P, i, Math.floor((i + j)/2), a, b);
+    }
+
+};
+// your code here
+let P = [new Vertex(1,3), new Vertex(2,6), new Vertex(-1,4), new Vertex(-9, 2), new Vertex(-6, -2), new Vertex(5,-3)]
+let chans = new Chans(P)
+// let result = chans.Hull()
+let result = chans.GrahamScan(P)
+for(let p of result){
+    console.log(p.xPos, p.yPos)
+}
+let a = new Vertex(7, 0);
+let b = new Vertex(7, 9);
+let newRes = bSearch(result, 0, 3, a, b);
+console.log("The largest angle with line (", a.xPos, a.yPos, ") (", b.xPos, b.yPos, ") is made by:", newRes.xPos, newRes.yPos)
