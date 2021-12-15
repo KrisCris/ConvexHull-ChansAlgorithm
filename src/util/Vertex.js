@@ -2,10 +2,12 @@ export default class Vertex {
     xPos;
     yPos;
     predecessor;
+    color;
 
-    constructor(xPos, yPos) {
+    constructor(xPos, yPos, color="#74ff99") {
         this.xPos = xPos;
         this.yPos = yPos;
+        this.color = color
     }
 
     static xSort(v1, v2) {
