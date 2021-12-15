@@ -4,6 +4,7 @@ export default class Chans {
     P;
     subP = [];
     subCH = [];
+    eachMaxAngleV = []
     static instance;
 
     constructor(P) {
@@ -25,20 +26,23 @@ export default class Chans {
     }
 
     Hull(P) {
-
-        for (let t = 0; true; t++) {
+        for (let t = 1; true; t++) {
             let m = Math.min(Math.pow(2, Math.pow(2, t)), P.length)
             let L = this.PartialHull(P, m)
-            return L
-            if (L != false) {
+            if (L != null) {
+                let edges = []
+                for (let i = 1; i < L.length; i++) {
+                    edges.push(new Edge(L[i - 1], L[i]))
+                }
+                return { vertices: L, edges: edges }
             }
         }
     }
 
     PartialHull(m) {
         let r = Math.ceil(this.P.length / m)
-        // Divide P into P1, P2, ... Pr
 
+        // Divide P into P1, P2, ... Pr
         this.subP = []
         for (let i = 0; i < r; i++) {
             this.subP.push(this.P.slice(m * i, m * (i + 1)))
@@ -49,8 +53,11 @@ export default class Chans {
             this.subCH.push(this.GrahamScan(p))
         }
 
-        // JarvisMarch
+        // "JarvisMarch"
+        let ret = this.JarvisMarch(r, m)
+        return ret == null ? null : ret
     }
+
     GrahamScan(P) {
         let xSorted = P.sort(Vertex.xSort);
 
@@ -86,6 +93,35 @@ export default class Chans {
         return { vertices: chLower.concat(chUpper), edges: edges }
     }
 
+    // m: max size of each vertice list
+    // r: number of lists
+    JarvisMarch(r, m) {
+        this.eachMaxAngleV = []
+        let pk = [new Vertex(Number.MIN_SAFE_INTEGER, 0), this.P.sort(Vertex.ySort)[0]]
+        for (let k = 1; k <= m; k++) {
+            this.eachMaxAngleV.push([])
+            for (let i = 0; i < r; i++) {
+                this.eachMaxAngleV[k - 1].push(this.bSearch(this.subCH[i], 0, this.subCH[i].length, pk[k - 1], p[k]))
+            }
+            let angle = Number.MIN_SAFE_INTEGER
+            pk.push(this.eachMaxAngleV[k - 1][0])
+            for (let d of this.eachMaxAngleV[k - 1]) {
+                if (Vertex.degree(pk[k - 1], p[k], d) > angle) {
+                    pk[k + 1] = d
+                }
+            }
+            if (pk[k + 1] === pk[1]) {
+                return pk.slice(1, pk.length - 2)
+            }
+        }
+        return null
+    }
+
+    // P: the vertices list
+    // i: begin idx of the searching process
+    // j: end idx of the searching process
+    // a: first vertex of the edge
+    // b: second vertex of the edge
     bSearch(P, i, j, a, b) {
         if (i == j)
             return P[i];
@@ -109,11 +145,6 @@ export default class Chans {
         }
 
     };
-
-
-    JarvisMarch() {
-
-    }
 
     // to be removed
     test() {

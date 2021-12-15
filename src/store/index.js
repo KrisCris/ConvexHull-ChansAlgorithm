@@ -45,7 +45,7 @@ export default createStore({
         grahamScan({ commit, state }) {
             let chans = Chans.getInstance(state.rawVertices);
             if (chans) {
-                commit("setEdges", chans.GrahamScan(state.rawVertices).edges)
+                commit("setEdges", chans.Hull(state.rawVertices).edges)
                 // console.log(this.edges);
 
                 // console.log("test for bsearch:", chans.test());
