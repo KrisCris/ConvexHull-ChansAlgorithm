@@ -1,6 +1,6 @@
 <template>
 <div class="ControlPanel">
-
+<button @click="grahamScan">GrahamScan</button>
 </div>
 </template>
 
@@ -8,11 +8,11 @@
 
 export default {
     name: "ControlPanel",
-    data() {
-        return {
-
-        };
-    },
+    methods:{
+        grahamScan(){
+            this.$store.dispatch("grahamScan")
+        }
+    }
 };
 </script>
 
