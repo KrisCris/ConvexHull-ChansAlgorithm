@@ -21,15 +21,13 @@ export default class Vertex {
     }
 
     static orient(p, q, r) {
-        return (p.xPos*q.yPos+q.xPos*r.yPos+r.xPos*p.yPos) - (p.xPos*r.yPos+q.xPos*p.yPos+r.xPos*q.yPos)
+        return (p.xPos * q.yPos + q.xPos * r.yPos + r.xPos * p.yPos) - (p.xPos * r.yPos + q.xPos * p.yPos + r.xPos * q.yPos)
     }
 
-    static degree(p, q, r){
-        let a = [p.xPos-q.xPos, p.yPos-q.yPos]
-        let b = [r.xPos-q.xPos, r.yPos-q.yPos]
-        let cos = (a[0]*b[0]+a[1]*b[1])/(Math.sqrt(Math.pow(a[0],2)+Math.pow(a[1],2))*Math.sqrt(Math.pow(b[0],2)+Math.pow(b[1],2)))
+    static degree(p, q, r) {
+        let a = [p.xPos - q.xPos, p.yPos - q.yPos]
+        let b = [r.xPos - q.xPos, r.yPos - q.yPos]
+        let cos = (a[0] * b[0] + a[1] * b[1]) / (Math.sqrt(Math.pow(a[0], 2) + Math.pow(a[1], 2)) * Math.sqrt(Math.pow(b[0], 2) + Math.pow(b[1], 2)))
         return Math.acos(cos)
     }
 }
-
-module.exports = Vertex

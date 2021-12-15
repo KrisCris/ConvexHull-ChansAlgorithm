@@ -1,17 +1,17 @@
-export default class Edge{
+export default class Edge {
     begin;
     end;
 
-    constructor(begin, end){
+    constructor(begin, end) {
         this.begin = begin;
         this.end = end;
     }
 
-    get x0(){
+    get x0() {
         return this.begin.xPos
     }
 
-    get y0(){
+    get y0() {
         return this.begin.yPos
     }
 
