@@ -29,13 +29,7 @@ export default {
             console.log(this.vertices)
         },
         grahamScan(){
-            this.edges = []
-            let ch = Chans.GrahamScan(this.vertices)
-            for(let i = 1; i < ch.length; i++){
-                this.edges.push(new Edge(ch[i-1], ch[i]))
-            }
-            this.edges.push(new Edge(ch[0], ch[ch.length-1]))
-            console.log(this.edges)
+            this.edges = Chans.GrahamScan(this.vertices).edges
         }
     },
     mounted(){

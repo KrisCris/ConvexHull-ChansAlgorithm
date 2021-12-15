@@ -1,9 +1,10 @@
 import Vertex from "./Vertex.js";
+import Edge from './Edge.js'
 export default class Chans {
 
     static GrahamScan(vertices) {
         let xSorted = vertices.sort(Vertex.xSort);
-        
+
         // Compute the lower hull
         let chLower = [xSorted[0], xSorted[1]]
         for (let i = 2; i < xSorted.length; i++) {
@@ -21,12 +22,19 @@ export default class Chans {
             }
             chUpper.push(xSorted[i])
         }
-
-        // Merge 2 hulls
+        // build edges
+        let edges = []
+        for (let i = 1; i < chLower.length; i++) {
+            edges.push(new Edge(chLower[i - 1], chLower[i]))
+        }
+        for (let i = 1; i < chUpper.length; i++) {
+            edges.push(new Edge(chUpper[i - 1], chUpper[i]))
+        }
+        // Merge 2 hulls (vertices)
         chLower.pop()
         chUpper.pop()
 
-        return chLower.concat(chUpper)
+        return { vertices: chLower.concat(chUpper), edges: edges }
     }
 
     JarvisMarch() {
