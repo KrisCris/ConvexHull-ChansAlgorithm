@@ -25,10 +25,10 @@ export default class Chans {
         }
     }
 
-    Hull(P) {
+    Hull() {
         for (let t = 1; true; t++) {
-            let m = Math.min(Math.pow(2, Math.pow(2, t)), P.length)
-            let L = this.PartialHull(P, m)
+            let m = Math.min(Math.pow(2, Math.pow(2, t)), this.P.length)
+            let L = this.PartialHull(m)
             if (L != null) {
                 let edges = []
                 for (let i = 1; i < L.length; i++) {
@@ -37,6 +37,75 @@ export default class Chans {
                 return { vertices: L, edges: edges }
             }
         }
+    }
+
+    mChans(m){
+        let r = Math.ceil(this.P.length / m)
+
+        // Divide P into P1, P2, ... Pr
+        this.subP = []
+        for (let i = 0; i < r; i++) {
+            this.subP.push(this.P.slice(m * i, m * (i + 1)))
+        }
+
+        // Compute CH for each Pi
+        for (let p of this.subP) {
+            this.subCH.push(this.GrahamScan(p))
+        }
+
+        this.eachMaxAngleV = []
+        // get lowest point p1
+        let p1 = this.P[0]
+        for(let d of this.P){
+            if (d.yPos < p1.yPos){
+                p1 = d
+            }
+        }
+        let pk = [new Vertex(Number.MIN_SAFE_INTEGER, 0), p1]
+        for (let k = 1; k <= m; k++) {
+            this.eachMaxAngleV.push([])
+            for (let i = 0; i < r; i++) {
+                this.eachMaxAngleV[k - 1].push(this.bSearch(this.subCH[i].vertices, 0, this.subCH[i].vertices.length-1, pk[k - 1], pk[k]))
+            }
+            console.log(this.eachMaxAngleV[k - 1])
+            let angle = Number.MIN_SAFE_INTEGER
+            pk.push(this.eachMaxAngleV[k - 1][0])
+            for (let d of this.eachMaxAngleV[k - 1]) {
+                if (Vertex.degree(pk[k - 1], pk[k], d) > angle) {
+                    pk[k + 1] = d
+                }
+            }
+            if (pk[k + 1] === pk[1]) {
+                pk = pk.slice(1, pk.length - 2)
+                break
+            }
+        }
+        if(pk[0].xPos<0){
+            pk = pk.slice(1, pk.length - 1)
+        }
+
+
+        if (pk != null) {
+            let edges = []
+            for (let i = 1; i < pk.length; i++) {
+                edges.push(new Edge(pk[i - 1], pk[i]))
+            }
+            return { vertices: pk, edges: edges, subCH: this.subCH, subP:this.subP}
+        }
+    }
+
+    testPartialGH(m){
+        let r = Math.ceil(this.P.length / m)
+        this.subP = []
+        for (let i = 0; i < r; i++) {
+            this.subP.push(this.P.slice(m * i, m * (i + 1)))
+        }
+
+        for (let p of this.subP) {
+            this.subCH.push(this.GrahamScan(p))
+        }
+
+        return [this.subP, this.subCH]
     }
 
     PartialHull(m) {
@@ -59,6 +128,9 @@ export default class Chans {
     }
 
     GrahamScan(P) {
+        if(P.length < 2){
+            return { vertices: [P[0]], edges: [new Edge(P[0], P[0])] }
+        }
         let xSorted = P.sort(Vertex.xSort);
 
         // Compute the lower hull
@@ -97,22 +169,33 @@ export default class Chans {
     // r: number of lists
     JarvisMarch(r, m) {
         this.eachMaxAngleV = []
-        let pk = [new Vertex(Number.MIN_SAFE_INTEGER, 0), this.P.sort(Vertex.ySort)[0]]
+        // get lowest point p1
+        let p1 = this.P[0]
+        for(let d of this.P){
+            if (d.yPos < p1.yPos){
+                p1 = d
+            }
+        }
+        let pk = [new Vertex(Number.MIN_SAFE_INTEGER, 0), p1]
         for (let k = 1; k <= m; k++) {
             this.eachMaxAngleV.push([])
             for (let i = 0; i < r; i++) {
-                this.eachMaxAngleV[k - 1].push(this.bSearch(this.subCH[i], 0, this.subCH[i].length, pk[k - 1], p[k]))
+                this.eachMaxAngleV[k - 1].push(this.bSearch(this.subCH[i].vertices, 0, this.subCH[i].vertices.length-1, pk[k - 1], pk[k]))
             }
             let angle = Number.MIN_SAFE_INTEGER
             pk.push(this.eachMaxAngleV[k - 1][0])
             for (let d of this.eachMaxAngleV[k - 1]) {
-                if (Vertex.degree(pk[k - 1], p[k], d) > angle) {
+                if (Vertex.degree(pk[k - 1], pk[k], d) > angle) {
                     pk[k + 1] = d
                 }
             }
             if (pk[k + 1] === pk[1]) {
                 return pk.slice(1, pk.length - 2)
             }
+        }
+        // debug purpose
+        if(r == 1){
+            return pk.slice(1, pk.length - 2)
         }
         return null
     }
