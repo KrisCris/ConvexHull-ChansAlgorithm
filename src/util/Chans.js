@@ -111,6 +111,6 @@ for(let p of result){
     console.log(p.xPos, p.yPos)
 }
 let a = new Vertex(7, 0);
-let b = new Vertex(7, 1);
+let b = new Vertex(7, 9);
 let newRes = bSearch(result, 0, 3, a, b);
-console.log("The largest angle with line (7, 0) (7, 1) is made by:", newRes.xPos, newRes.yPos)
+console.log("The largest angle with line (", a.xPos, a.yPos, ") (", b.xPos, b.yPos, ") is made by:", newRes.xPos, newRes.yPos)
