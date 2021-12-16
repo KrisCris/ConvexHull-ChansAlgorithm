@@ -181,6 +181,7 @@ export default createStore({
             let inst = Chans.getInstance(state.rawVertices);
             if (inst) {
                 commit("setResults", inst.Hull())
+                console.log(state.rawResults)
             } else {
                 alert("You have to add more dots!!!!");
             }
@@ -246,29 +247,30 @@ export default createStore({
             let mScans = state.rawResults[state.round].JM.mScans;
             let mVertices = state.rawResults[state.round].JM.mVertices;
             state.fullHullEdges = []
-            let count = mScans.length * state.rawResults[state.round].r
+            // let count = mScans.length * state.rawResults[state.round].r
+            let count = 0
+            for (let s of mScans) {
+                count += s.length
+            }
+
             let grp = 0
             let idx = 0
             let interval = setInterval(() => {
                 if (count > 0) {
-                    if (mVertices[grp].xPos != undefined && mScans[grp][idx].xPos != undefined) {
-                        let e = new Edge(mVertices[grp], mScans[grp][idx])
-                        commit("setScanEdge", e)
-                        // the largest edge
-                        if (mScans[grp][idx] == mVertices[grp + 1]) {
-                            commit("addFullHullEdge", e)
-                        }
-                        if (mScans[grp].length - 1 > idx) {
-                            idx++
-                        } else {
-                            idx = 0
-                            grp++
-                        }
-                        count--;
-                    } else {
-                        console.log("error", mVertices[grp], mScans[grp][idx].xPos)
-                        count == 0
+                    let e = new Edge(mVertices[grp], mScans[grp][idx])
+                    commit("setScanEdge", e)
+                    // the largest edge
+                    if (mScans[grp][idx] == mVertices[grp + 1]) {
+                        commit("addFullHullEdge", e)
                     }
+                    if (mScans[grp].length - 1 > idx) {
+                        idx++
+                    } else {
+                        idx = 0
+                        grp++
+                    }
+                    count--;
+
                 } else {
                     clearInterval(interval)
                     commit("setScanEdge", undefined)
