@@ -46,6 +46,7 @@ export default {
 @media only screen and (max-width: 600px) {
     .ControlPanel {
         width: 100%;
+        min-height: 10rem;
         flex: none;
         background: rgb(51, 153, 85);
     }
