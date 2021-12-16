@@ -42,14 +42,15 @@ export default class ChansStep {
             }
         }
     }
+
     //step 1: divide the point set into subsets of no more than m points in each
     mChansDiv1() {
-        let r = Math.ceil(this.P.length / m)
+        let r = Math.ceil(this.P.length / this.m)
 
         // Divide P into P1, P2, ... Pr
         this.subP = []
         for (let i = 0; i < r; i++) {
-            this.subP.push(this.P.slice(m * i, m * (i + 1)))
+            this.subP.push(this.P.slice(this.m * i, this.m * (i + 1)))
         }
         return this.subP
     }
@@ -62,7 +63,7 @@ export default class ChansStep {
         }
 
         // "JarvisMarch"
-        let ret = this.JarvisMarch(r, m)
+        let ret = this.JarvisMarch(r, this.m)
         return ret == null ? null : ret 
     }
     // step 3: find the biggest angle's vertex by binary search
@@ -70,16 +71,16 @@ export default class ChansStep {
     // this.k is the k-th point in the output hull
     mChansFindV3(i) {
         // get lowest point p1
+        let r = Math.ceil(this.P.length / this.m);
         if(this.k == 0) {
             let p1 = this.P[0];
-            let r = Math.ceil(this.P.length / this.m);
+            
             for(let d of this.P){
                 if (d.yPos < p1.yPos){
                     p1 = d
                 }
             }
             let pk = [new Vertex(Number.MIN_SAFE_INTEGER, 0), p1]
-            
         }
         this.eachMaxAngleV.push([])
         for (let i = 0; i < r; i++) {
