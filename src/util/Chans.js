@@ -2,6 +2,7 @@ import Vertex from "./Vertex.js";
 import Edge from './Edge.js'
 export default class Chans {
     P;
+    // discarded
     subP = [];
     subCH = [];
     eachMaxAngleV = []
@@ -35,7 +36,9 @@ export default class Chans {
                 m: 0,
                 r: 0,
                 subP: [],
+                pLen: this.P.length,
                 subCH: [],
+                edgeLen:0,
                 JM: {
                     mEdges: [],
                     mVertices: [],
@@ -147,24 +150,25 @@ export default class Chans {
 
         // Divide P into P1, P2, ... Pr
         let subP = []
-        this.subP = []
         for (let i = 0; i < r; i++) {
-            this.subP.push(this.P.slice(m * i, m * (i + 1)))
+            subP.push(this.P.slice(m * i, m * (i + 1)))
         }
         // update step.subP
         this.steps[this.steps.length - 1].subP = subP
 
         let subCH = []
-        this.subCH = []
         // Compute CH for each Pi
-        for (let p of this.subP) {
-            this.subCH.push(this.GrahamScan(p))
+        for (let p of subP) {
+            let ret = this.GrahamScan(p)
+            subCH.push(ret)
+            // update step.edgeLen
+            this.steps[this.steps.length - 1].edgeLen += ret.edges.length
         }
         // update step.subCH
         this.steps[this.steps.length - 1].subCH = subCH
 
         // "JarvisMarch"
-        let ret = this.JarvisMarch(r, m)
+        let ret = this.JarvisMarch(subCH, r, m)
         return ret == null ? null : ret
     }
 
@@ -208,9 +212,8 @@ export default class Chans {
 
     // m: max size of each vertice list
     // r: number of lists
-    JarvisMarch(r, m) {
+    JarvisMarch(subCH, r, m) {
         let eachMaxAngleV = []
-        this.eachMaxAngleV = []
         // get lowest point p1
         let p1 = this.P[0]
         for (let d of this.P) {
@@ -221,9 +224,9 @@ export default class Chans {
 
         let pk = [new Vertex(Number.MIN_SAFE_INTEGER, 0), p1]
         for (let k = 1; k <= m; k++) {
-            this.eachMaxAngleV.push([])
+            eachMaxAngleV.push([])
             for (let i = 0; i < r; i++) {
-                let l = [...this.subCH[i].vertices]
+                let l = [...subCH[i].vertices]
                 let idx = l.indexOf(pk[k - 1])
                 if (idx > -1) {
                     l.splice(idx, 1);
@@ -233,11 +236,11 @@ export default class Chans {
                     l.splice(idx, 1);
                 }
                 if (l.length < 1) continue
-                this.eachMaxAngleV[k - 1].push(this.bSearch(l, 0, l.length - 1, pk[k - 1], pk[k]))
+                eachMaxAngleV[k - 1].push(this.bSearch(l, 0, l.length - 1, pk[k - 1], pk[k]))
             }
             let angle = Number.MIN_SAFE_INTEGER
-            pk.push(this.eachMaxAngleV[k - 1][0])
-            for (let d of this.eachMaxAngleV[k - 1]) {
+            pk.push(eachMaxAngleV[k - 1][0])
+            for (let d of eachMaxAngleV[k - 1]) {
                 if (Vertex.degree(pk[k - 1], pk[k], d) > angle) {
                     angle = Vertex.degree(pk[k - 1], pk[k], d)
                     pk[k + 1] = d
@@ -253,7 +256,7 @@ export default class Chans {
                 // update step.JM.mEdges
                 let edges = [];
                 for (let i = 1; i < pk.length; i++) {
-                    edges.push(new Edge(pk[i - 1], pk[i]));
+                    edges.push(new Edge(vertices[i - 1], vertices[i]));
                 }
                 this.steps[this.steps.length - 1].JM.mEdges = edges;
                 // update step.isCompleted
@@ -271,7 +274,7 @@ export default class Chans {
         // update step.JM.mEdges
         let edges = [];
         for (let i = 1; i < pk.length; i++) {
-            edges.push(new Edge(pk[i - 1], pk[i]));
+            edges.push(new Edge(vertices[i - 1], vertices[i]));
         }
         this.steps[this.steps.length - 1].JM.mEdges = edges;
 
