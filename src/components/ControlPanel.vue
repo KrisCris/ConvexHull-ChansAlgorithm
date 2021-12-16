@@ -97,7 +97,7 @@
                             href="https://en.wikipedia.org/wiki/Gift_wrapping_algorithm"
                             >Jarvis’s march</a
                         >
-                        on the groups, which has m steps.
+                        with bineary search on the groups, which has m steps.
                     </p>
                     <p>
                         To compute m, we start with a small value of it and
