@@ -15,12 +15,16 @@
         </p>
         <h1>Developer</h1>
         <div class="devs">
-            <a target="_blank" rel="noopener noreferrer" href="https://github.com/KrisCris"><p>Pingchuan Huang</p></a>
+            <p><a target="_blank" rel="noopener noreferrer" href="https://github.com/KrisCris">Pingchuan Huang</a></p>
             <p>Yong Chen</p>
+        </div>
+        <h1>Git Repo</h1>
+        <div>
+            <p><a target="_blank" rel="noopener noreferrer" href="https://github.com/KrisCris/ConvexHull-ChansAlgorithm">https://github.com/KrisCris/ConvexHull-ChansAlgorithm</a></p>
         </div>
         <h1>Tools</h1>
         <div class="tools">
-            <a target="_blank" rel="noopener noreferrer" href="https://vuejs.org/"><p>Vue.js</p></a>
+            <p><a target="_blank" rel="noopener noreferrer" href="https://vuejs.org/">Vue.js</a></p>
             <a target="_blank" rel="noopener noreferrer" href="https://github.com/davidmerfield/randomColor"><p>randomColor</p></a>
         </div>
         <h1>References</h1>
