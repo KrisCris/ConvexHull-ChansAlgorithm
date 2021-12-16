@@ -1,11 +1,5 @@
 <template>
     <div class="ControlPanel">
-        <!-- <button @click="chans">Chans</button>
-        <button @click="chansM">Chans-m</button>
-        <button @click="maxAngle">maxAngleEdge?</button>
-        <button @click="partialGH">BuildPartialGH</button><br />
-        <span style="color: white">m:</span>
-        <input type="number" name="m" id="" v-model="m" /> -->
         <!-- step 0 -->
         <div v-if="$store.state.step == 0" class="warpper">
             <div class="description">
@@ -128,19 +122,20 @@
                 <div class="content">
                     <h2>3.1 Demo</h2>
                     <h4>Step 1/3</h4>
-                    <p>m = </p>
+                    <p>m = {{$store.state.rawResults[$store.state.round].m}}</p>
                     <p>round = {{$store.state.round}}</p>
+                    <p>has next round = {{!$store.state.rawResults[$store.state.round].isCompleted}}</p>
                 </div>
             </div>
 
             <div class="controllor">
                 <div class="content">
-                    <button @click="autoPlay">Auto</button>
-                    <button class="green" @click="GroupPoints">1. Group Points</button>
-                    <button class="green">2. Graham Scan</button>
-                    <button class="green">Group Points</button>
-                    <button class="green">Group Points</button>
-                    <button class="green" @click="NextRound">Next Round</button>
+                    <!-- <button @click="autoRun">Auto</button> -->
+                    <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==0" class="green" @click="groupPoints">1. Group Points</button>
+                    <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==1" class="green" @click="grahamScan">2. Graham’s Scan</button>
+                    <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==2" class="green" @click="jarvisMarch">3. Jarvis’s March</button>
+                    <!-- <button class="green">Group Points</button>
+                    <button class="green" @click="nextRound">Next Round</button> -->
                 </div>
             </div>
         </div>
@@ -176,22 +171,21 @@ export default {
             });
         },
 
-        autoPlay() {
-            this.$store.dispatch("autoRun");
+        groupPoints() {
+            this.$store.dispatch("groupPoints")
         },
 
-        chans() {
-            this.$store.dispatch("chans");
+        grahamScan() {
+            this.$store.dispatch("grahamScan")
         },
-        chansM() {
-            this.$store.dispatch("chansM");
+
+        jarvisMarch() {
+            this.$store.dispatch("jarvisMarch")
         },
-        maxAngle() {
-            this.$store.commit("maxAngle");
-        },
-        partialGH() {
-            this.$store.commit("partialGH");
-        },
+
+        // autoRun() {
+        //     this.$store.dispatch("autoRun");
+        // },
     },
     computed: {
         m: {

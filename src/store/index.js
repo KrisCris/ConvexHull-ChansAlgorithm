@@ -12,38 +12,65 @@ export default createStore({
     state: {
         // Progress Control
         drawable: true,
-        // 0: draw dots
-        // 1: group them in different colors
-        // 2: create sub CHs by GS alg, edges in different color
-        // 3: 
+        // 0: Welcome Page
+        // 1: Draw Points
+        // 2: Division on manipulate m and try demo
+        // 3: Try Demo
         step: 0,
+        canRun: true,
+
+        // which round of m is currently in
+        round: 0,
+        subStep: 0,
 
 
         // Geo Data
         rawVertices: [],
-        groupedVertices: [],
+        rawResults: [],
         subHullEdges: [],
+
+        // groupedVertices: [],
+        scanEdge: undefined,
         fullHullEdges: [],
         m: 6
     },
     // [commit] mutations
     // $store.commit('mutationName', {})
     mutations: {
-        nextStep(state) {
-            state.step += 1
+        updateStep(state, value) {
+            state.step += value
         },
 
-        prevStep(state) {
-            state.step -= 1
+        updateCanRun(state, predicate) {
+            state.canRun = predicate
+        },
+
+        nextRound(state) {
+            state.round++
+        },
+
+        nextSubStep(state) {
+            state.subStep++
         },
 
         addVertex(state, pos) {
-            if(state.step == 0) return
+            if (state.step == 0) return
             state.rawVertices.push(new Vertex(pos.x, pos.y))
+        },
+
+        addEdge(state, edge) {
+            state.subHullEdges.push(edge)
         },
 
         setEdges(state, edges) {
             state.subHullEdges = edges
+        },
+
+        setResults(state, results) {
+            for (let res of results) {
+                res.colors = randomColor({ count: res.r })
+            }
+            state.rawResults = results
         },
 
         maxAngle(state) {
@@ -100,7 +127,30 @@ export default createStore({
     // can access state but can't change state.
     // actions => commit mutation => change data
     actions: {
+        nextStep({ commit, state, dispatch }) {
+            switch (state.step) {
+                case 0:
+                    break
+                case 1: {
+                    dispatch("computeChans")
+                    break
+                }
+            }
+
+            commit("updateStep", 1)
+        },
+
+        prevStep({ commit, state }) {
+            switch (state.step) {
+
+            }
+
+            commit("updateStep", -1)
+        },
+
+
         addPoints({ commit }, payload) {
+            commit("updateCanRun", false)
             function getRandomInt(min, max) {
                 min = Math.ceil(min);
                 max = Math.floor(max);
@@ -111,15 +161,139 @@ export default createStore({
             let interval = setInterval(() => {
                 if (count > 0) {
                     commit("addVertex", {
-                        x: getRandomInt(6, payload.maxX-5),
+                        x: getRandomInt(6, payload.maxX - 5),
                         y: getRandomInt(6, payload.maxY)
                     })
                     count--;
                 } else {
                     clearInterval(interval)
+                    commit("updateCanRun", true)
                 }
-            }, 50)
+            }, 30)
         },
+
+        computeChans({ state, commit }) {
+            let inst = Chans.getInstance(state.rawVertices);
+            if (inst) {
+                commit("setResults", inst.Hull())
+                console.log(state.rawResults)
+            } else {
+                alert("You had to add more dots!!!!");
+            }
+        },
+
+        groupPoints({ state, commit }) {
+            commit("updateCanRun", false)
+            let count = state.rawResults[state.round].pLen
+            let grp = 0
+            let idx = 0
+            let interval = setInterval(() => {
+                if (count > 0) {
+                    let color = state.rawResults[state.round].colors[grp]
+                    state.rawResults[state.round].subP[grp][idx].color = color
+                    if (state.rawResults[state.round].subP[grp].length - 1 > idx) {
+                        idx++
+                    } else {
+                        idx = 0
+                        grp++
+                    }
+                    count--;
+                } else {
+                    clearInterval(interval)
+                    commit("updateCanRun", true)
+                }
+            }, 30)
+            commit("nextSubStep")
+        },
+
+        grahamScan({ state, commit }) {
+            commit("updateCanRun", false)
+            let count = state.rawResults[state.round].edgeLen
+            let grp = 0
+            let idx = 0
+            let interval = setInterval(() => {
+                if (count > 0) {
+                    let color = state.rawResults[state.round].colors[grp]
+                    state.rawResults[state.round].subCH[grp].edges[idx].color = color
+                    commit("addEdge", state.rawResults[state.round].subCH[grp].edges[idx])
+                    if (state.rawResults[state.round].subCH[grp].edges.length - 1 > idx) {
+                        idx++
+                    } else {
+                        idx = 0
+                        grp++
+                    }
+                    count--;
+                } else {
+                    clearInterval(interval)
+                    commit("updateCanRun", true)
+                }
+            }, 30)
+
+            commit("nextSubStep")
+
+        },
+
+        jarvisMarch({ state, commit }) {
+            commit("updateCanRun", false);
+            let mEdges = state.rawResults[state.round].JM.mEdges;
+            let mScans = state.rawResults[state.round].JM.mScans;
+            let mVertices = state.rawResults[state.round].JM.mVertices;
+
+            let count = state.rawResults[state.round].edgeLen
+            let grp = 0
+            let idx = 0
+            let interval = setInterval(() => {
+                if (count > 0) {
+                    let color = state.rawResults[state.round].colors[grp]
+                    state.rawResults[state.round].subCH[grp].edges[idx].color = color
+                    commit("addEdge", state.rawResults[state.round].subCH[grp].edges[idx])
+                    if (state.rawResults[state.round].subCH[grp].edges.length - 1 > idx) {
+                        idx++
+                    } else {
+                        idx = 0
+                        grp++
+                    }
+                    count--;
+                } else {
+                    clearInterval(interval)
+                    commit("updateCanRun", true)
+                }
+            }, 30)
+
+            commit("nextSubStep")
+        },
+
+        autoRun({ state, commit }) {
+            let standardGap = 100;
+            let fastGap = 25;
+
+
+            let colors = randomColor({ count: state.rawResults[0].r });
+            let baseTimeout = 0;
+
+            for (let i = 0; i < state.rawResults[0].r; i++) {
+                setTimeout(() => {
+                    let counter = 0
+                    let interval = setInterval(() => {
+                        if (counter > state.rawResults[0].subP[i].length - 1) {
+                            clearInterval(interval)
+                        } else {
+                            console.log(state.rawResults[0].subP[i][counter])
+                            state.rawResults[0].subP[i][counter].color = colors[i]
+                        }
+
+                    }, standardGap)
+
+                }, baseTimeout)
+                baseTimeout += state.rawResults[0].subP[i].length * standardGap
+            }
+        },
+
+
+
+
+
+
 
 
 
@@ -196,23 +370,34 @@ export default createStore({
                     break
                 }
                 case 1: {
-                    // do something
                     return state.rawVertices
                     break
                 }
-                // case X...
+                case 2: {
+                    return state.rawVertices
+                    break
+                }
+                case 3: {
+                    return state.rawVertices
+                }
+
             }
         },
 
         edges(state) {
             switch (state.step) {
                 case 0: {
-                    return state.subHullEdges
+                    // return state.subHullEdges
                     break
                 }
                 case 1: {
-                    // do something
                     break
+                }
+                case 2: {
+                    break
+                }
+                case 3: {
+                    return state.subHullEdges
                 }
                 // case X...
             }
