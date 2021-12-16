@@ -6,6 +6,7 @@
         <button @click="partialGH">BuildPartialGH</button><br />
         <span style="color: white">m:</span>
         <input type="number" name="m" id="" v-model="m" /> -->
+        <!-- step 0 -->
         <div v-if="$store.state.step == 0" class="warpper">
             <div class="description">
                 <div class="content">
@@ -30,7 +31,7 @@
                 </div>
             </div>
         </div>
-
+        <!-- step 1 -->
         <div v-if="$store.state.step == 1" class="warpper">
             <div class="description">
                 <div class="content">
@@ -51,6 +52,7 @@
             <div class="controllor">
                 <div class="content">
                     <input
+                        :disabled="!$store.state.canRun"
                         type="range"
                         min="1"
                         max="100"
@@ -59,16 +61,90 @@
                         id=""
                         v-model="pointsNum"
                     />
-                    <button @click="addPoints">
+                    <button :disabled="!$store.state.canRun" @click="addPoints">
                         Add {{ pointsNum }} Points
                     </button>
-                    <button class="green" @click="nextStep">Next</button>
+                    <button
+                        :disabled="!$store.state.canRun"
+                        class="green"
+                        @click="nextStep"
+                    >
+                        Next
+                    </button>
+                    <button
+                        :disabled="!$store.state.canRun"
+                        class="gray"
+                        @click="prevStep"
+                    >
+                        Prev
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- step 2 -->
+        <div v-if="$store.state.step == 2" class="warpper">
+            <div class="description">
+                <div class="content">
+                    <h2>2. How does it work</h2>
+                    <p>
+                        Chan’s idea was to partition the points into groups of
+                        equal size. There are m points in each group, and so the
+                        number of groups is r = ⌈n/m⌉. For each group we compute
+                        its hull using
+                        <a
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            href="https://en.wikipedia.org/wiki/Graham_scan"
+                            >Graham’s scan</a
+                        >. Then we run
+                        <a
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            href="https://en.wikipedia.org/wiki/Gift_wrapping_algorithm"
+                            >Jarvis’s march</a
+                        >
+                        on the groups, which has m steps.
+                    </p>
+                    <p>
+                        To compute m, we start with a small value of it and
+                        increase it rapidly until the algorithm returns a
+                        successful result.
+                    </p>
+                </div>
+            </div>
+
+            <div class="controllor">
+                <div class="content">
+                    <button class="green" @click="nextStep">Try Demo</button>
+                    <button>Manipulate M</button>
                     <button class="gray" @click="prevStep">Prev</button>
                 </div>
             </div>
         </div>
-        <div v-if="$store.state.step == 0"></div>
-        <div v-if="$store.state.step == 0"></div>
+
+        <!-- step 3 -->
+        <div v-if="$store.state.step == 3" class="warpper">
+            <div class="description">
+                <div class="content">
+                    <h2>3.1 Demo</h2>
+                    <h4>Step 1/3</h4>
+                    <p>m = </p>
+                    <p>round = {{$store.state.round}}</p>
+                </div>
+            </div>
+
+            <div class="controllor">
+                <div class="content">
+                    <button @click="autoPlay">Auto</button>
+                    <button class="green" @click="GroupPoints">1. Group Points</button>
+                    <button class="green">2. Graham Scan</button>
+                    <button class="green">Group Points</button>
+                    <button class="green">Group Points</button>
+                    <button class="green" @click="NextRound">Next Round</button>
+                </div>
+            </div>
+        </div>
+
         <div v-if="$store.state.step == 0"></div>
         <div v-if="$store.state.step == 0"></div>
     </div>
@@ -84,11 +160,11 @@ export default {
     },
     methods: {
         nextStep() {
-            this.$store.commit("nextStep");
+            this.$store.dispatch("nextStep");
         },
 
         prevStep() {
-            this.$store.commit("prevStep");
+            this.$store.dispatch("prevStep");
         },
 
         addPoints() {
@@ -98,6 +174,10 @@ export default {
                 maxX: document.getElementById("svg").clientWidth,
                 maxY: document.getElementById("svg").clientHeight,
             });
+        },
+
+        autoPlay() {
+            this.$store.dispatch("autoRun");
         },
 
         chans() {
@@ -285,6 +365,12 @@ export default {
 }
 .ControlPanel button:active {
     filter: brightness(80%);
+    transition: all 0.1s ease-in-out;
+}
+
+.ControlPanel button:disabled {
+    background-color: #9b9b9b;
+    color: #525252;
     transition: all 0.1s ease-in-out;
 }
 </style>
