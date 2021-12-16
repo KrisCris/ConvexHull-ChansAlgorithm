@@ -53,7 +53,7 @@ export default createStore({
         },
 
         addVertex(state, pos) {
-            if (state.step != 1) return
+            if (state.step != 1 && state.step != 4) return
             for (let d of state.rawVertices)
                 if (d.xPos == pos.x && d.yPos == pos.y)
                     return
@@ -122,6 +122,16 @@ export default createStore({
             if (state.step == 2) {
                 dispatch("computeChans")
             }
+            if (state.step == 3) {
+                for (let v of state.rawVertices) {
+                    v.color = "#74ff99"
+                }
+                state.subStep = 0;
+                state.round = 0;
+                state.fullHullEdges = [];
+                state.subHullEdges = [];
+                state.rawResults = [];
+            }
             commit("updateStep", 1)
         },
 
@@ -151,12 +161,14 @@ export default createStore({
                         y: getRandomInt(6, payload.maxY)
                     })
                     let len2 = state.rawVertices.length
-                    while (len == len2)
-                        ret = commit("addVertex", {
+                    while (len == len2) {
+                        commit("addVertex", {
                             x: getRandomInt(6, payload.maxX - 5),
                             y: getRandomInt(6, payload.maxY)
                         })
                         len2 = state.rawVertices.length
+                    }
+
                     count--;
                 } else {
                     clearInterval(interval)
@@ -169,13 +181,12 @@ export default createStore({
             let inst = Chans.getInstance(state.rawVertices);
             if (inst) {
                 commit("setResults", inst.Hull())
-                console.log(state.rawResults)
             } else {
                 alert("You have to add more dots!!!!");
             }
         },
 
-        groupPoints({ state, commit }) {
+        groupPoints({ state, commit }, callback = undefined) {
             commit("updateCanRun", false)
             let count = state.rawResults[state.round].pLen
             let grp = 0
@@ -193,17 +204,19 @@ export default createStore({
                     count--;
                 } else {
                     clearInterval(interval)
+                    if (callback) callback()
                     commit("updateCanRun", true)
                 }
             }, 20)
             commit("nextSubStep")
         },
 
-        grahamScan({ state, commit }) {
+        grahamScan({ state, commit }, callback = undefined) {
             commit("updateCanRun", false)
             let count = state.rawResults[state.round].edgeLen
             let grp = 0
             let idx = 0
+            state.subHullEdges = []
             let interval = setInterval(() => {
                 if (count > 0) {
                     let color = state.rawResults[state.round].colors[grp]
@@ -218,6 +231,7 @@ export default createStore({
                     count--;
                 } else {
                     clearInterval(interval)
+                    if (callback) callback()
                     commit("updateCanRun", true)
                 }
             }, 20)
@@ -231,7 +245,7 @@ export default createStore({
             let mEdges = state.rawResults[state.round].JM.mEdges;
             let mScans = state.rawResults[state.round].JM.mScans;
             let mVertices = state.rawResults[state.round].JM.mVertices;
-
+            state.fullHullEdges = []
             let count = mScans.length * state.rawResults[state.round].r
             let grp = 0
             let idx = 0
@@ -265,32 +279,18 @@ export default createStore({
             commit("nextSubStep")
         },
 
-        chansM({ commit, state }) {
-
+        mChans({ commit, state, dispatch }) {
             let inst = Chans.getInstance(state.rawVertices);
             if (inst) {
-                // run Hull()
-                let r = Math.ceil(inst.P.length / state.m)
-                let ret = inst.mChans(state.m)
-
+                commit("setResults", inst.mHull(state.m))
+                for (let v of state.rawVertices) {
+                    v.color = "#74ff99"
+                }
+                state.fullHullEdges = []
                 state.subHullEdges = []
-                state.rawVertices = []
-                let colors = randomColor({ count: r })
-
-                for (let i = 0; i < r; i++) {
-                    for (let v of ret.subP[i]) {
-                        v.color = colors[i]
-                        state.rawVertices.push(v)
-                    }
-                }
-                for (let i = 0; i < r; i++) {
-                    for (let e of ret.subCH[i].edges) {
-                        e.color = colors[i]
-                        state.subHullEdges.push(e)
-                    }
-                }
-                console.log(ret.edges)
-                state.subHullEdges = state.subHullEdges.concat(ret.edges)
+                dispatch("groupPoints", () => { dispatch('grahamScan', () => { dispatch('jarvisMarch') }) })
+                state.subStep = 0;
+                state.round = 0;
             } else {
                 alert("You have to add more dots!!!!");
             }

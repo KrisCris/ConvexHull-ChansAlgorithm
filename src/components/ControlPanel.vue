@@ -136,15 +136,66 @@
                     <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==0" class="green" @click="groupPoints">Group Points</button>
                     <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==1" class="green" @click="grahamScan">Graham’s Scan</button>
                     <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==2" class="green" @click="jarvisMarch">Jarvis’s March</button>
-                    <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==3 && !$store.state.rawResults[$store.state.round].isCompleted" class="green" @click="nextRound">4. Next Round</button>
+                    <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==3 && !$store.state.rawResults[$store.state.round].isCompleted" class="green" @click="nextRound">Next Iteration</button>
                     <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==3 && $store.state.rawResults[$store.state.round].isCompleted" @click="restart">Restart</button>
-                    <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==3 && $store.state.rawResults[$store.state.round].isCompleted" @click="restart" class="green">Try other m values</button>
+                    <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==3 && $store.state.rawResults[$store.state.round].isCompleted" @click="nextStep" class="green">Try other m values</button>
                 </div>
             </div>
         </div>
 
-        <div v-if="$store.state.step == 0"></div>
-        <div v-if="$store.state.step == 0"></div>
+        <div v-if="$store.state.step == 4" class="warpper">
+            <div class="description">
+                <div class="content">
+                    <h2>Extra. Playground</h2>
+                    <p>
+                        Feel free to test your m values!
+                    </p>
+                </div>
+            </div>
+
+            <div class="controllor">
+                <div class="content">
+                    <div class="mSettings">
+                        <input
+                            :disabled="!$store.state.canRun"
+                            type="range"
+                            min="1"
+                            max="100"
+                            step="1"
+                            name="pointsNum"
+                            id=""
+                            v-model="m"
+                        />
+                        <button :disabled="!$store.state.canRun" class="green" @click="mChans">
+                            Run m = {{m}}
+                        </button>
+                    </div>
+                    <div class="mSettings">
+                        <input
+                            :disabled="!$store.state.canRun"
+                            type="range"
+                            min="1"
+                            max="100"
+                            step="1"
+                            name="pointsNum"
+                            id=""
+                            v-model="pointsNum"
+                        />
+                        <button :disabled="!$store.state.canRun" @click="addPoints">
+                            Add {{ pointsNum }} Points
+                        </button>
+                    </div>
+
+                    <button
+                        :disabled="!$store.state.canRun"
+                        class="gray"
+                        @click="restart"
+                    >
+                        Home
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -192,6 +243,9 @@ export default {
 
         restart(){
             this.$store.commit("restart")
+        },
+        mChans(){
+            this.$store.dispatch("mChans")
         }
     },
     computed: {
@@ -247,6 +301,13 @@ export default {
         margin: 0.5rem 0.5rem;
         /* background: #00ac64; */
     }
+    .warpper .content .mSettings input{
+        width:60%;
+    }
+    .warpper .content .mSettings button{
+        min-width:20%;
+        margin-left: 5%;
+    }
     .ControlPanel {
         width: 100%;
         min-height: 10rem;
@@ -287,6 +348,10 @@ export default {
         font-size: 0.9rem;
     }
 
+    .warpper .content .mSettings{
+        margin-top: 2rem;
+    }
+
 
     .ControlPanel {
         height: 100%;
@@ -314,6 +379,11 @@ export default {
     .warpper .content {
         margin: 2rem 2rem;
     }
+
+    .warpper .content .mSettings{
+        margin-top: 2rem;
+    }
+
     .ControlPanel {
         height: 100%;
         width: 22rem;

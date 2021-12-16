@@ -38,7 +38,7 @@ export default class Chans {
                 subP: [],
                 pLen: this.P.length,
                 subCH: [],
-                edgeLen:0,
+                edgeLen: 0,
                 JM: {
                     mEdges: [],
                     mVertices: [],
@@ -63,17 +63,50 @@ export default class Chans {
         }
     }
 
+    mHull(m) {
+        this.steps = [];
+        this.steps.push({
+            m: 0,
+            r: 0,
+            subP: [],
+            pLen: this.P.length,
+            subCH: [],
+            edgeLen: 0,
+            JM: {
+                mEdges: [],
+                mVertices: [],
+                mScans: []
+            },
+            isCompleted: false
+        });
+        // update step.m
+        this.steps[this.steps.length - 1].m = m
+
+        
+        let L = this.PartialHull(m)
+        return this.steps
+        // if (L != null) {
+        //     // let edges = []
+        //     // for (let i = 1; i < L.length; i++) {
+        //     //     edges.push(new Edge(L[i - 1], L[i]))
+        //     // }
+        //     // return { vertices: L, edges: edges, subCH: this.subCH, subP: this.subP, r: Math.ceil(this.P.length / m) }
+            
+        // }
+
+    }
+
     mChans(m) {
         let r = Math.ceil(this.P.length / m)
 
         // Divide P into P1, P2, ... Pr
-        this.subP = []
+        let subP = []
         for (let i = 0; i < r; i++) {
-            this.subP.push(this.P.slice(m * i, m * (i + 1)))
+            subP.push(this.P.slice(m * i, m * (i + 1)))
         }
 
         // Compute CH for each Pi
-        for (let p of this.subP) {
+        for (let p of subP) {
             this.subCH.push(this.GrahamScan(p))
         }
 
@@ -127,20 +160,6 @@ export default class Chans {
             }
             return { vertices: pk, edges: edges, subCH: this.subCH, subP: this.subP }
         }
-    }
-
-    testPartialGH(m) {
-        let r = Math.ceil(this.P.length / m)
-        this.subP = []
-        for (let i = 0; i < r; i++) {
-            this.subP.push(this.P.slice(m * i, m * (i + 1)))
-        }
-
-        for (let p of this.subP) {
-            this.subCH.push(this.GrahamScan(p))
-        }
-
-        return [this.subP, this.subCH]
     }
 
     PartialHull(m) {
