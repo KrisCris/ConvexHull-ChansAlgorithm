@@ -33,10 +33,21 @@ export default {
     flex-direction: column;
 }
 
-.col {
-    width: 100%;
-    flex: 1;
-    display: flex;
-    flex-direction: row;
+@media only screen and (max-width: 600px) {
+    .col {
+        width: 100%;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+@media only screen and (min-width: 600px) {
+    .col {
+        width: 100%;
+        flex: 1;
+        display: flex;
+        flex-direction: row;
+    }
 }
 </style>
