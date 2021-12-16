@@ -109,8 +109,8 @@
 
             <div class="controllor">
                 <div class="content">
-                    <button class="green" @click="nextStep">Try Demo</button>
-                    <button>Manipulate M</button>
+                    <button class="green" @click="nextStep">Demo</button>
+                    <!-- <button>Manipulate M</button> -->
                     <button class="gray" @click="prevStep">Prev</button>
                 </div>
             </div>
@@ -120,22 +120,26 @@
         <div v-if="$store.state.step == 3" class="warpper">
             <div class="description">
                 <div class="content">
-                    <h2>3.1 Demo</h2>
-                    <h4>Step 1/3</h4>
-                    <p>m = {{$store.state.rawResults[$store.state.round].m}}</p>
-                    <p>round = {{$store.state.round}}</p>
-                    <p>has next round = {{!$store.state.rawResults[$store.state.round].isCompleted}}</p>
+                    <h2 v-if="$store.state.subStep<3">Step {{$store.state.subStep+1}}/3</h2>
+                    <h4 v-if="$store.state.subStep==0">The first step is dividing the points into groups each with the size of m.</h4>
+                    <p v-if="$store.state.subStep==0" >m = min(2<sup>2</sup><sup><sup>#iteration</sup></sup>, #points) = {{$store.state.rawResults[$store.state.round].m}}</p>
+                    <h4 v-if="$store.state.subStep==1">Now, we are going to compute the convex hull of each subset of points using Graham's Scan.</h4>
+                    <h4 v-if="$store.state.subStep==2">Starting from the up-most vertex in the plane, m number of convex edges will be computed using Jarvis’s March.</h4>
+                    <h2 v-if="$store.state.subStep==3 && !$store.state.rawResults[$store.state.round].isCompleted">More Iterations Required</h2>
+                    <h2 v-if="$store.state.subStep==3 && $store.state.rawResults[$store.state.round].isCompleted">Process Complete</h2>
+                    <h4 v-if="$store.state.subStep==3 && !$store.state.rawResults[$store.state.round].isCompleted">Oh no, m is too small! We need increase m in order to warp the entire shape!</h4>
+                    <h4 v-if="$store.state.subStep==3 && $store.state.rawResults[$store.state.round].isCompleted">The convex hull is successfully computed. Now, you can manually tweak the m value, or restart the demo!</h4>
                 </div>
             </div>
 
             <div class="controllor">
                 <div class="content">
-                    <!-- <button @click="autoRun">Auto</button> -->
                     <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==0" class="green" @click="groupPoints">1. Group Points</button>
                     <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==1" class="green" @click="grahamScan">2. Graham’s Scan</button>
                     <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==2" class="green" @click="jarvisMarch">3. Jarvis’s March</button>
-                    <!-- <button class="green">Group Points</button>
-                    <button class="green" @click="nextRound">Next Round</button> -->
+                    <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==3 && !$store.state.rawResults[$store.state.round].isCompleted" class="green" @click="nextRound">4. Next Round</button>
+                    <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==3 && $store.state.rawResults[$store.state.round].isCompleted" @click="restart">Restart</button>
+                    <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==3 && $store.state.rawResults[$store.state.round].isCompleted" @click="restart" class="green">Try other m values</button>
                 </div>
             </div>
         </div>
@@ -183,9 +187,13 @@ export default {
             this.$store.dispatch("jarvisMarch")
         },
 
-        // autoRun() {
-        //     this.$store.dispatch("autoRun");
-        // },
+        nextRound() {
+            this.$store.commit("nextRound")
+        },
+
+        restart(){
+            this.$store.commit("restart")
+        }
     },
     computed: {
         m: {
