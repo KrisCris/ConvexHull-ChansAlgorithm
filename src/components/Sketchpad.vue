@@ -8,9 +8,25 @@
                 :x2="e.x1"
                 :y1="e.y0"
                 :y2="e.y1"
-                :style="{ stroke: e.color }"
+                :style="{ stroke: e.color, 'stroke-width': 2 }"
             ></line>
-
+            <line
+                v-if="scanEdge"
+                :x1="scanEdge.x0"
+                :x2="scanEdge.x1"
+                :y1="scanEdge.y0"
+                :y2="scanEdge.y1"
+                :style="{ stroke: 'white', 'stroke-width': 4 }"
+            ></line>
+            <line
+                v-for="e in fullHullEdges"
+                :key="e"
+                :x1="e.x0"
+                :x2="e.x1"
+                :y1="e.y0"
+                :y2="e.y1"
+                :style="{ stroke: 'white', 'stroke-width': 6 }"
+            ></line>
             <circle
                 v-for="v in vertices"
                 :key="v"
@@ -35,6 +51,14 @@ export default {
         edges() {
             return this.$store.getters.edges;
         },
+
+        scanEdge() {
+            return this.$store.state.scanEdge;
+        },
+
+        fullHullEdges() {
+            return this.$store.state.fullHullEdges;
+        },
     },
     methods: {
         addPoint(e) {
@@ -48,16 +72,13 @@ export default {
 <style>
 .sketchpad {
     height: 100%;
-    background-color: lightBlue;
+    background-color: rgb(35, 39, 48);
     flex: 1;
 }
 circle {
     filter: brightness(75%);
 }
-line {
-    stroke-width: 2;
-}
-svg{
+svg {
     position: relative;
     width: 100%;
     height: 100%;

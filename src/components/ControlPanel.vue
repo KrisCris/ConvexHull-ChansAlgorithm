@@ -1,11 +1,6 @@
 <template>
     <div class="ControlPanel">
-        <!-- <button @click="chans">Chans</button>
-        <button @click="chansM">Chans-m</button>
-        <button @click="maxAngle">maxAngleEdge?</button>
-        <button @click="partialGH">BuildPartialGH</button><br />
-        <span style="color: white">m:</span>
-        <input type="number" name="m" id="" v-model="m" /> -->
+        <!-- step 0 -->
         <div v-if="$store.state.step == 0" class="warpper">
             <div class="description">
                 <div class="content">
@@ -30,7 +25,7 @@
                 </div>
             </div>
         </div>
-
+        <!-- step 1 -->
         <div v-if="$store.state.step == 1" class="warpper">
             <div class="description">
                 <div class="content">
@@ -51,6 +46,7 @@
             <div class="controllor">
                 <div class="content">
                     <input
+                        :disabled="!$store.state.canRun"
                         type="range"
                         min="1"
                         max="100"
@@ -59,16 +55,95 @@
                         id=""
                         v-model="pointsNum"
                     />
-                    <button @click="addPoints">
+                    <button :disabled="!$store.state.canRun" @click="addPoints">
                         Add {{ pointsNum }} Points
                     </button>
-                    <button class="green" @click="nextStep">Next</button>
+                    <button
+                        :disabled="!$store.state.canRun"
+                        class="green"
+                        @click="nextStep"
+                    >
+                        Next
+                    </button>
+                    <button
+                        :disabled="!$store.state.canRun"
+                        class="gray"
+                        @click="prevStep"
+                    >
+                        Prev
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- step 2 -->
+        <div v-if="$store.state.step == 2" class="warpper">
+            <div class="description">
+                <div class="content">
+                    <h2>2. How does it work</h2>
+                    <p>
+                        Chan’s idea was to partition the points into groups of
+                        equal size. There are m points in each group, and so the
+                        number of groups is r = ⌈n/m⌉. For each group we compute
+                        its hull using
+                        <a
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            href="https://en.wikipedia.org/wiki/Graham_scan"
+                            >Graham’s scan</a
+                        >. Then we run
+                        <a
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            href="https://en.wikipedia.org/wiki/Gift_wrapping_algorithm"
+                            >Jarvis’s march</a
+                        >
+                        on the groups, which has m steps.
+                    </p>
+                    <p>
+                        To compute m, we start with a small value of it and
+                        increase it rapidly until the algorithm returns a
+                        successful result.
+                    </p>
+                </div>
+            </div>
+
+            <div class="controllor">
+                <div class="content">
+                    <button class="green" @click="nextStep">Demo</button>
+                    <!-- <button>Manipulate M</button> -->
                     <button class="gray" @click="prevStep">Prev</button>
                 </div>
             </div>
         </div>
-        <div v-if="$store.state.step == 0"></div>
-        <div v-if="$store.state.step == 0"></div>
+
+        <!-- step 3 -->
+        <div v-if="$store.state.step == 3" class="warpper">
+            <div class="description">
+                <div class="content">
+                    <h2 v-if="$store.state.subStep<3">Step {{$store.state.subStep+1}}/3</h2>
+                    <h4 v-if="$store.state.subStep==0">The first step is dividing the points into groups each with the size of m.</h4>
+                    <p v-if="$store.state.subStep==0" >m = min(2<sup>2</sup><sup><sup>#iteration</sup></sup>, #points) = {{$store.state.rawResults[$store.state.round].m}}</p>
+                    <h4 v-if="$store.state.subStep==1">Now, we are going to compute the convex hull of each subset of points using Graham's Scan.</h4>
+                    <h4 v-if="$store.state.subStep==2">Starting from the up-most vertex in the plane, m number of convex edges will be computed using Jarvis’s March.</h4>
+                    <h2 v-if="$store.state.subStep==3 && !$store.state.rawResults[$store.state.round].isCompleted">More Iterations Required</h2>
+                    <h2 v-if="$store.state.subStep==3 && $store.state.rawResults[$store.state.round].isCompleted">Process Complete</h2>
+                    <h4 v-if="$store.state.subStep==3 && !$store.state.rawResults[$store.state.round].isCompleted">Oh no, m is too small! We need increase m in order to warp the entire shape!</h4>
+                    <h4 v-if="$store.state.subStep==3 && $store.state.rawResults[$store.state.round].isCompleted">The convex hull is successfully computed. Now, you can manually tweak the m value, or restart the demo!</h4>
+                </div>
+            </div>
+
+            <div class="controllor">
+                <div class="content">
+                    <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==0" class="green" @click="groupPoints">1. Group Points</button>
+                    <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==1" class="green" @click="grahamScan">2. Graham’s Scan</button>
+                    <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==2" class="green" @click="jarvisMarch">3. Jarvis’s March</button>
+                    <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==3 && !$store.state.rawResults[$store.state.round].isCompleted" class="green" @click="nextRound">4. Next Round</button>
+                    <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==3 && $store.state.rawResults[$store.state.round].isCompleted" @click="restart">Restart</button>
+                    <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==3 && $store.state.rawResults[$store.state.round].isCompleted" @click="restart" class="green">Try other m values</button>
+                </div>
+            </div>
+        </div>
+
         <div v-if="$store.state.step == 0"></div>
         <div v-if="$store.state.step == 0"></div>
     </div>
@@ -84,11 +159,11 @@ export default {
     },
     methods: {
         nextStep() {
-            this.$store.commit("nextStep");
+            this.$store.dispatch("nextStep");
         },
 
         prevStep() {
-            this.$store.commit("prevStep");
+            this.$store.dispatch("prevStep");
         },
 
         addPoints() {
@@ -100,18 +175,25 @@ export default {
             });
         },
 
-        chans() {
-            this.$store.dispatch("chans");
+        groupPoints() {
+            this.$store.dispatch("groupPoints")
         },
-        chansM() {
-            this.$store.dispatch("chansM");
+
+        grahamScan() {
+            this.$store.dispatch("grahamScan")
         },
-        maxAngle() {
-            this.$store.commit("maxAngle");
+
+        jarvisMarch() {
+            this.$store.dispatch("jarvisMarch")
         },
-        partialGH() {
-            this.$store.commit("partialGH");
+
+        nextRound() {
+            this.$store.commit("nextRound")
         },
+
+        restart(){
+            this.$store.commit("restart")
+        }
     },
     computed: {
         m: {
@@ -285,6 +367,12 @@ export default {
 }
 .ControlPanel button:active {
     filter: brightness(80%);
+    transition: all 0.1s ease-in-out;
+}
+
+.ControlPanel button:disabled {
+    background-color: #9b9b9b;
+    color: #525252;
     transition: all 0.1s ease-in-out;
 }
 </style>

@@ -109,16 +109,6 @@ export default {
     stroke-width: 3px;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5 {
-    color: #7fd496;
-    text-align: left;
-    border-bottom: solid;
-}
-
 .about {
     margin: 2rem 5rem;
 }

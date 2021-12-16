@@ -2,9 +2,13 @@ import Vertex from "./Vertex.js";
 import Edge from './Edge.js'
 export default class Chans {
     P;
+    // discarded
     subP = [];
     subCH = [];
     eachMaxAngleV = []
+
+    steps = []
+
     static instance;
 
     constructor(P) {
@@ -18,28 +22,48 @@ export default class Chans {
             return Chans.instance;
         } else {
             let inst = Chans.instance
-            inst.P = P
-            inst.subP = []
-            inst.subCH = []
+            inst.P = P;
+            inst.subP = [];
+            inst.subCH = [];
             return inst;
         }
     }
 
     Hull() {
+        this.steps = [];
         for (let t = 1; true; t++) {
+            this.steps.push({
+                m: 0,
+                r: 0,
+                subP: [],
+                pLen: this.P.length,
+                subCH: [],
+                edgeLen:0,
+                JM: {
+                    mEdges: [],
+                    mVertices: [],
+                    mScans: []
+                },
+                isCompleted: false
+            });
+
             let m = Math.min(Math.pow(2, Math.pow(2, t)), this.P.length)
+            // update step.m
+            this.steps[this.steps.length - 1].m = m
+
             let L = this.PartialHull(m)
             if (L != null) {
-                let edges = []
-                for (let i = 1; i < L.length; i++) {
-                    edges.push(new Edge(L[i - 1], L[i]))
-                }
-                return { vertices: L, edges: edges, subCH: this.subCH, subP:this.subP, r: Math.ceil(this.P.length / m)}
+                // let edges = []
+                // for (let i = 1; i < L.length; i++) {
+                //     edges.push(new Edge(L[i - 1], L[i]))
+                // }
+                // return { vertices: L, edges: edges, subCH: this.subCH, subP: this.subP, r: Math.ceil(this.P.length / m) }
+                return this.steps
             }
         }
     }
 
-    mChans(m){
+    mChans(m) {
         let r = Math.ceil(this.P.length / m)
 
         // Divide P into P1, P2, ... Pr
@@ -56,8 +80,8 @@ export default class Chans {
         this.eachMaxAngleV = []
         // get lowest point p1
         let p1 = this.P[0]
-        for(let d of this.P){
-            if (d.yPos < p1.yPos){
+        for (let d of this.P) {
+            if (d.yPos < p1.yPos) {
                 p1 = d
             }
         }
@@ -74,7 +98,7 @@ export default class Chans {
                 if (idx > -1) {
                     l.splice(idx, 1);
                 }
-                if(l.length<1) continue
+                if (l.length < 1) continue
                 this.eachMaxAngleV[k - 1].push(this.bSearch(l, 0, l.length - 1, pk[k - 1], pk[k]))
                 // this.eachMaxAngleV[k - 1].push(this.bSearch(this.subCH[i].vertices, 0, this.subCH[i].vertices.length - 1, pk[k - 1], pk[k]))
                 // this.eachMaxAngleV[k - 1].push(this.lSearch(l, pk[k - 1], pk[k]))
@@ -101,11 +125,11 @@ export default class Chans {
             for (let i = 1; i < pk.length; i++) {
                 edges.push(new Edge(pk[i - 1], pk[i]))
             }
-            return { vertices: pk, edges: edges, subCH: this.subCH, subP:this.subP}
+            return { vertices: pk, edges: edges, subCH: this.subCH, subP: this.subP }
         }
     }
 
-    testPartialGH(m){
+    testPartialGH(m) {
         let r = Math.ceil(this.P.length / m)
         this.subP = []
         for (let i = 0; i < r; i++) {
@@ -121,25 +145,35 @@ export default class Chans {
 
     PartialHull(m) {
         let r = Math.ceil(this.P.length / m)
+        // update step.r
+        this.steps[this.steps.length - 1].r = r
 
         // Divide P into P1, P2, ... Pr
-        this.subP = []
+        let subP = []
         for (let i = 0; i < r; i++) {
-            this.subP.push(this.P.slice(m * i, m * (i + 1)))
+            subP.push(this.P.slice(m * i, m * (i + 1)))
         }
-        this.subCH = []
+        // update step.subP
+        this.steps[this.steps.length - 1].subP = subP
+
+        let subCH = []
         // Compute CH for each Pi
-        for (let p of this.subP) {
-            this.subCH.push(this.GrahamScan(p))
+        for (let p of subP) {
+            let ret = this.GrahamScan(p)
+            subCH.push(ret)
+            // update step.edgeLen
+            this.steps[this.steps.length - 1].edgeLen += ret.edges.length
         }
+        // update step.subCH
+        this.steps[this.steps.length - 1].subCH = subCH
 
         // "JarvisMarch"
-        let ret = this.JarvisMarch(r, m)
+        let ret = this.JarvisMarch(subCH, r, m)
         return ret == null ? null : ret
     }
 
     GrahamScan(P) {
-        if(P.length < 2){
+        if (P.length < 2) {
             return { vertices: [P[0]], edges: [new Edge(P[0], P[0])] }
         }
         let xSorted = P.sort(Vertex.xSort);
@@ -178,20 +212,21 @@ export default class Chans {
 
     // m: max size of each vertice list
     // r: number of lists
-    JarvisMarch(r, m) {
-        this.eachMaxAngleV = []
+    JarvisMarch(subCH, r, m) {
+        let eachMaxAngleV = []
         // get lowest point p1
         let p1 = this.P[0]
-        for(let d of this.P){
-            if (d.yPos < p1.yPos){
+        for (let d of this.P) {
+            if (d.yPos < p1.yPos) {
                 p1 = d
             }
         }
+
         let pk = [new Vertex(Number.MIN_SAFE_INTEGER, 0), p1]
         for (let k = 1; k <= m; k++) {
-            this.eachMaxAngleV.push([])
+            eachMaxAngleV.push([])
             for (let i = 0; i < r; i++) {
-                let l = [...this.subCH[i].vertices]
+                let l = [...subCH[i].vertices]
                 let idx = l.indexOf(pk[k - 1])
                 if (idx > -1) {
                     l.splice(idx, 1);
@@ -200,26 +235,50 @@ export default class Chans {
                 if (idx > -1) {
                     l.splice(idx, 1);
                 }
-                if(l.length<1) continue
-                this.eachMaxAngleV[k - 1].push(this.bSearch(l, 0, l.length - 1, pk[k - 1], pk[k]))
-                // this.eachMaxAngleV[k - 1].push(this.lSearch(l, pk[k - 1], pk[k]))
-
-                // this.eachMaxAngleV[k - 1].push(this.bSearch(this.subCH[i].vertices, 0, this.subCH[i].vertices.length-1, pk[k - 1], pk[k]))
+                if (l.length < 1) continue
+                eachMaxAngleV[k - 1].push(this.bSearch(l, 0, l.length - 1, pk[k - 1], pk[k]))
             }
             let angle = Number.MIN_SAFE_INTEGER
-            pk.push(this.eachMaxAngleV[k - 1][0])
-            for (let d of this.eachMaxAngleV[k - 1]) {
+            pk.push(eachMaxAngleV[k - 1][0])
+            for (let d of eachMaxAngleV[k - 1]) {
                 if (Vertex.degree(pk[k - 1], pk[k], d) > angle) {
                     angle = Vertex.degree(pk[k - 1], pk[k], d)
                     pk[k + 1] = d
                 }
             }
             if (pk[k + 1] === pk[1]) {
-                return pk.slice(1, pk.length)
+                let vertices = pk.slice(1, pk.length);
+
+                // update step.JM.mScans
+                this.steps[this.steps.length - 1].JM.mScans = eachMaxAngleV;
+                // update step.JM.mVertices
+                this.steps[this.steps.length - 1].JM.mVertices = vertices;
+                // update step.JM.mEdges
+                let edges = [];
+                for (let i = 1; i < pk.length; i++) {
+                    edges.push(new Edge(vertices[i - 1], vertices[i]));
+                }
+                this.steps[this.steps.length - 1].JM.mEdges = edges;
+                // update step.isCompleted
+                this.steps[this.steps.length - 1].isCompleted = true;
+
+                return vertices;
             }
         }
-        // debug purpose
-        return null
+
+        // update step.JM.mScans
+        this.steps[this.steps.length - 1].JM.mScans = eachMaxAngleV;
+        // update step.JM.mVertices
+        let vertices = pk.slice(1, pk.length);
+        this.steps[this.steps.length - 1].JM.mVertices = vertices;
+        // update step.JM.mEdges
+        let edges = [];
+        for (let i = 1; i < pk.length; i++) {
+            edges.push(new Edge(vertices[i - 1], vertices[i]));
+        }
+        this.steps[this.steps.length - 1].JM.mEdges = edges;
+
+        return null;
     }
 
     // P: the vertices list
@@ -231,6 +290,8 @@ export default class Chans {
         if (i == j)
             return P[i];
         if (Vertex.degree(a, b, P[i]) > Vertex.degree(a, b, P[j])) {
+            // update step.subCH
+            this.steps[this.steps.length - 1].JM.mScans
             if (Vertex.degree(a, b, P[Math.floor((i + j) / 2)]) < Vertex.degree(a, b, P[j]))
                 return this.bSearch(P, i, Math.floor((i + j) / 2), a, b);
             else if (Vertex.degree(a, b, P[Math.floor((i + j) / 2 + 1)]) > Vertex.degree(a, b, P[Math.floor((i + j) / 2)]))
@@ -251,29 +312,16 @@ export default class Chans {
 
     };
 
-    lSearch(P, a, b){
+    lSearch(P, a, b) {
         let max = undefined
         let maxAngle = Number.MIN_SAFE_INTEGER
-        for(let v of P){
-            if(Vertex.degree(a,b,v) >= maxAngle){
-                maxAngle = Vertex.degree(a,b,v)
+        for (let v of P) {
+            if (Vertex.degree(a, b, v) >= maxAngle) {
+                maxAngle = Vertex.degree(a, b, v)
                 max = v
             }
         }
         return max
-    }
-
-    // to be removed
-    test() {
-        // let result = chans.Hull()
-        let result = this.GrahamScan(this.P).vertices
-        // for (let p of result) {
-        //     console.log(p.xPos, p.yPos)
-        // }
-        let a = new Vertex(7, 0);
-        let b = new Vertex(7, 9);
-        let newRes = this.bSearch(result, 0, 3, a, b);
-        return ("The largest angle with line (" + a.xPos + " " + a.yPos + ") (" + b.xPos + " " + b.yPos + ") is made by:" + newRes.xPos + " " + newRes.yPos)
     }
 }
 
