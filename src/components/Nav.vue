@@ -1,7 +1,7 @@
 <template>
     <div id="nav" class="top">
         <router-link :to="{ name: 'ChansAlg' }">Chan's Algorithm</router-link>
-        <router-link :to="{ name: 'Test' }">Test </router-link>
+        <router-link :to="{ name: 'About' }">About </router-link>
     </div>
 </template>
 
@@ -46,7 +46,7 @@ export default {
 }
 .top{
     width: 100%;
-    height:1.1rem;
+    height:1.5rem;
     flex:none;
 }
 </style>
