@@ -181,7 +181,6 @@ export default createStore({
             let inst = Chans.getInstance(state.rawVertices);
             if (inst) {
                 commit("setResults", inst.Hull())
-                console.log(state.rawResults)
             } else {
                 alert("You have to add more dots!!!!");
             }
@@ -247,7 +246,6 @@ export default createStore({
             let mScans = state.rawResults[state.round].JM.mScans;
             let mVertices = state.rawResults[state.round].JM.mVertices;
             state.fullHullEdges = []
-            // let count = mScans.length * state.rawResults[state.round].r
             let count = 0
             for (let s of mScans) {
                 count += s.length

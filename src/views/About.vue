@@ -116,14 +116,4 @@ export default {
 .about {
     margin: 2rem 5rem;
 }
-/* .about a {
-    text-decoration: none;
-    color: #13ffeb;
-}
-.about p {
-    color: #64ff8d;
-    font-weight: bold;
-    text-align: left;
-} */
-
 </style>

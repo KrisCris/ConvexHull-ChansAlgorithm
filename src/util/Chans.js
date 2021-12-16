@@ -2,13 +2,7 @@ import Vertex from "./Vertex.js";
 import Edge from './Edge.js'
 export default class Chans {
     P;
-    // discarded
-    subP = [];
-    subCH = [];
-    eachMaxAngleV = []
-
     steps = []
-
     static instance;
 
     constructor(P) {
@@ -53,11 +47,6 @@ export default class Chans {
 
             let L = this.PartialHull(m)
             if (L != null) {
-                // let edges = []
-                // for (let i = 1; i < L.length; i++) {
-                //     edges.push(new Edge(L[i - 1], L[i]))
-                // }
-                // return { vertices: L, edges: edges, subCH: this.subCH, subP: this.subP, r: Math.ceil(this.P.length / m) }
                 return this.steps
             }
         }
@@ -85,81 +74,6 @@ export default class Chans {
         
         let L = this.PartialHull(m)
         return this.steps
-        // if (L != null) {
-        //     // let edges = []
-        //     // for (let i = 1; i < L.length; i++) {
-        //     //     edges.push(new Edge(L[i - 1], L[i]))
-        //     // }
-        //     // return { vertices: L, edges: edges, subCH: this.subCH, subP: this.subP, r: Math.ceil(this.P.length / m) }
-            
-        // }
-
-    }
-
-    mChans(m) {
-        let r = Math.ceil(this.P.length / m)
-
-        // Divide P into P1, P2, ... Pr
-        let subP = []
-        for (let i = 0; i < r; i++) {
-            subP.push(this.P.slice(m * i, m * (i + 1)))
-        }
-
-        // Compute CH for each Pi
-        for (let p of subP) {
-            this.subCH.push(this.GrahamScan(p))
-        }
-
-        this.eachMaxAngleV = []
-        // get lowest point p1
-        let p1 = this.P[0]
-        for (let d of this.P) {
-            if (d.yPos < p1.yPos) {
-                p1 = d
-            }
-        }
-        let pk = [new Vertex(Number.MIN_SAFE_INTEGER, 0), p1]
-        for (let k = 1; k <= m; k++) {
-            this.eachMaxAngleV.push([])
-            for (let i = 0; i < r; i++) {
-                let l = [...this.subCH[i].vertices]
-                let idx = l.indexOf(pk[k - 1])
-                if (idx > -1) {
-                    l.splice(idx, 1);
-                }
-                idx = l.indexOf(pk[k])
-                if (idx > -1) {
-                    l.splice(idx, 1);
-                }
-                if (l.length < 1) continue
-                this.eachMaxAngleV[k - 1].push(this.bSearch(l, 0, l.length - 1, pk[k - 1], pk[k]))
-                // this.eachMaxAngleV[k - 1].push(this.bSearch(this.subCH[i].vertices, 0, this.subCH[i].vertices.length - 1, pk[k - 1], pk[k]))
-                // this.eachMaxAngleV[k - 1].push(this.lSearch(l, pk[k - 1], pk[k]))
-
-
-            }
-            // console.log(this.eachMaxAngleV[k - 1])
-            let angle = Number.MIN_SAFE_INTEGER
-            pk.push(this.eachMaxAngleV[k - 1][0])
-            for (let d of this.eachMaxAngleV[k - 1]) {
-                if (Vertex.degree(pk[k - 1], pk[k], d) > angle) {
-                    angle = Vertex.degree(pk[k - 1], pk[k], d)
-                    pk[k + 1] = d
-                }
-            }
-            if (pk[k + 1] === pk[1]) {
-                pk = pk.slice(1, pk.length)
-                break
-            }
-        }
-
-        if (pk != null) {
-            let edges = []
-            for (let i = 1; i < pk.length; i++) {
-                edges.push(new Edge(pk[i - 1], pk[i]))
-            }
-            return { vertices: pk, edges: edges, subCH: this.subCH, subP: this.subP }
-        }
     }
 
     PartialHull(m) {
