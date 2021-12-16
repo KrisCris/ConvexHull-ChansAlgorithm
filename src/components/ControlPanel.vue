@@ -31,7 +31,7 @@
                 <div class="content">
                     <h2>1. Draw Some Points</h2>
                     <p>
-                        Let's first add some points by simply clicking on the
+                        Let's first add some points (more than 3) by simply clicking on the
                         empty plane! Also, you are encouraged to randomly add as
                         many points as possible.
                     </p>
@@ -110,7 +110,6 @@
             <div class="controllor">
                 <div class="content">
                     <button class="green" @click="nextStep">Demo</button>
-                    <!-- <button>Manipulate M</button> -->
                     <button class="gray" @click="prevStep">Prev</button>
                 </div>
             </div>

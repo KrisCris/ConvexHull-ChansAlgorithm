@@ -28,10 +28,9 @@ export default createStore({
         rawVertices: [],
         rawResults: [],
         subHullEdges: [],
-
-        // groupedVertices: [],
-        scanEdge: undefined,
         fullHullEdges: [],
+        scanEdge: undefined,
+
         m: 6
     },
     // [commit] mutations
@@ -55,6 +54,10 @@ export default createStore({
 
         addVertex(state, pos) {
             if (state.step != 1) return
+            for (let d of state.rawVertices)
+                if (d.xPos == pos.x && d.yPos == pos.y)
+                    return
+
             state.rawVertices.push(new Vertex(pos.x, pos.y))
         },
 
@@ -105,52 +108,8 @@ export default createStore({
             state.subHullEdges = [];
         },
 
-        maxAngle(state) {
-            let inst = Chans.getInstance(state.rawVertices)
-            let b = inst.P[0]
-            for (let d of inst.P) {
-                if (d.yPos < b.yPos) {
-                    b = d
-                }
-            }
-            let a = new Vertex(Number.MIN_SAFE_INTEGER, 0)
-            // let a = state.rawVertices[state.rawVertices.length - 2]
-            // let b = state.rawVertices[state.rawVertices.length - 1]
-            // let testSet = state.rawVertices.slice(0, state.rawVertices.length - 2)
-            let res = inst.GrahamScan(state.rawVertices)
-            state.subHullEdges = res.edges
-            // let idx = res.vertices.indexOf(b)
-            // res.vertices.splice(idx, 1);
-
-            let r = inst.bSearch(res.vertices, 0, res.vertices.length - 1, a, b)
-            state.subHullEdges.push(new Edge(a, b, "rebeccapurple"))
-            state.subHullEdges.push(new Edge(b, r, "red"))
-        },
-
-        partialGH(state) {
-            let inst = Chans.getInstance(state.rawVertices)
-            let ret = inst.testPartialGH(state.m)
-            state.rawVertices = []
-            state.subHullEdges = []
-            let r = Math.ceil(inst.P.length / state.m)
-            let colors = randomColor({ count: r })
-            for (let i = 0; i < r; i++) {
-                for (let v of ret[0][i]) {
-                    v.color = colors[i]
-                    state.rawVertices.push(v)
-                }
-            }
-            for (let i = 0; i < r; i++) {
-                for (let e of ret[1][i].edges) {
-                    e.color = colors[i]
-                    state.subHullEdges.push(e)
-                }
-            }
-        },
-
         setM(state, val) {
             state.m = val
-            console.log("boopm")
         }
 
     },
@@ -160,22 +119,22 @@ export default createStore({
     // actions => commit mutation => change data
     actions: {
         nextStep({ commit, state, dispatch }) {
-            if(state.step == 2){
+            if (state.step == 2) {
                 dispatch("computeChans")
             }
             commit("updateStep", 1)
         },
 
         prevStep({ commit, state }) {
-            switch (state.step) {
-
+            if (state.step - 1 == 0) {
+                commit("restart")
+            } else {
+                commit("updateStep", -1)
             }
-
-            commit("updateStep", -1)
         },
 
 
-        addPoints({ commit }, payload) {
+        addPoints({ commit, state }, payload) {
             commit("updateCanRun", false)
             function getRandomInt(min, max) {
                 min = Math.ceil(min);
@@ -186,10 +145,18 @@ export default createStore({
             let count = payload.number
             let interval = setInterval(() => {
                 if (count > 0) {
+                    let len = state.rawVertices.length
                     commit("addVertex", {
                         x: getRandomInt(6, payload.maxX - 5),
                         y: getRandomInt(6, payload.maxY)
                     })
+                    let len2 = state.rawVertices.length
+                    while (len == len2)
+                        ret = commit("addVertex", {
+                            x: getRandomInt(6, payload.maxX - 5),
+                            y: getRandomInt(6, payload.maxY)
+                        })
+                        len2 = state.rawVertices.length
                     count--;
                 } else {
                     clearInterval(interval)
@@ -204,7 +171,7 @@ export default createStore({
                 commit("setResults", inst.Hull())
                 console.log(state.rawResults)
             } else {
-                alert("You had to add more dots!!!!");
+                alert("You have to add more dots!!!!");
             }
         },
 
@@ -286,7 +253,7 @@ export default createStore({
                         count--;
                     } else {
                         console.log("error", mVertices[grp], mScans[grp][idx].xPos)
-                        count==0
+                        count == 0
                     }
                 } else {
                     clearInterval(interval)
@@ -296,37 +263,6 @@ export default createStore({
             }, 20)
 
             commit("nextSubStep")
-        },
-
-        // doSomething(context){context.commit()}
-        chans({ commit, state }) {
-
-            let inst = Chans.getInstance(state.rawVertices);
-            if (inst) {
-                // run Hull()
-                let ret = inst.Hull()
-
-                state.subHullEdges = []
-                state.rawVertices = []
-                let colors = randomColor({ count: ret.r })
-
-                for (let i = 0; i < ret.r; i++) {
-                    for (let v of ret.subP[i]) {
-                        v.color = colors[i]
-                        state.rawVertices.push(v)
-                    }
-                }
-                for (let i = 0; i < ret.r; i++) {
-                    for (let e of ret.subCH[i].edges) {
-                        e.color = colors[i]
-                        state.subHullEdges.push(e)
-                    }
-                }
-                console.log(ret.edges)
-                state.subHullEdges = state.subHullEdges.concat(ret.edges)
-            } else {
-                alert("You had to add more dots!!!!");
-            }
         },
 
         chansM({ commit, state }) {
@@ -356,7 +292,7 @@ export default createStore({
                 console.log(ret.edges)
                 state.subHullEdges = state.subHullEdges.concat(ret.edges)
             } else {
-                alert("You had to add more dots!!!!");
+                alert("You have to add more dots!!!!");
             }
         },
 
