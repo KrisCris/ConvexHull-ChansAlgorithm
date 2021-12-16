@@ -14,7 +14,7 @@ const routes = [
     component: ChansAlg
   },
   {
-    path: '/',
+    path: '/:catchAll(.*)',
     redirect: '/ChansAlg'
   },
 ]
