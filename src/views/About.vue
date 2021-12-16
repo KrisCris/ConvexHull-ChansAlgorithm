@@ -16,7 +16,7 @@
         <h1>Developer</h1>
         <div class="devs">
             <p><a target="_blank" rel="noopener noreferrer" href="https://github.com/KrisCris">Pingchuan Huang</a></p>
-            <p>Yong Chen</p>
+            <p><a target="_blank" rel="noopener noreferrer" href="https://github.com/CocoYard">Yong Cheng</a></p>
         </div>
         <h1>Git Repo</h1>
         <div>
