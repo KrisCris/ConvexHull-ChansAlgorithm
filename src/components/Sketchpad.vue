@@ -1,6 +1,6 @@
 <template>
     <div class="sketchpad">
-        <svg id="svg" width="100%" height="100%" @click="addPoint">
+        <svg id="svg" @click="addPoint">
             <line
                 v-for="e in edges"
                 :key="e"
@@ -56,5 +56,11 @@ circle {
 }
 line {
     stroke-width: 2;
+}
+svg{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: block;
 }
 </style>
