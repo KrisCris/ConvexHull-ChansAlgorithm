@@ -59,7 +59,7 @@
                         Add {{ pointsNum }} Points
                     </button>
                     <button
-                        :disabled="!$store.state.canRun"
+                        :disabled="!($store.state.canRun && enoughPoints)"
                         class="green"
                         @click="nextStep"
                     >
@@ -134,9 +134,9 @@
 
             <div class="controllor">
                 <div class="content">
-                    <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==0" class="green" @click="groupPoints">1. Group Points</button>
-                    <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==1" class="green" @click="grahamScan">2. Graham’s Scan</button>
-                    <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==2" class="green" @click="jarvisMarch">3. Jarvis’s March</button>
+                    <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==0" class="green" @click="groupPoints">Group Points</button>
+                    <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==1" class="green" @click="grahamScan">Graham’s Scan</button>
+                    <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==2" class="green" @click="jarvisMarch">Jarvis’s March</button>
                     <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==3 && !$store.state.rawResults[$store.state.round].isCompleted" class="green" @click="nextRound">4. Next Round</button>
                     <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==3 && $store.state.rawResults[$store.state.round].isCompleted" @click="restart">Restart</button>
                     <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==3 && $store.state.rawResults[$store.state.round].isCompleted" @click="restart" class="green">Try other m values</button>
@@ -206,6 +206,9 @@ export default {
                 this.$store.commit("setM", value);
             },
         },
+        enoughPoints(){
+            return this.$store.state.rawVertices.length >= 3
+        }
     },
 };
 </script>
@@ -230,9 +233,6 @@ export default {
     min-height: 1.3rem;
     flex: none;
 }
-.warpper .content {
-    margin: 2rem 2rem;
-}
 
 .ControlPanel input {
     width: 75%;
@@ -243,7 +243,11 @@ export default {
 }
 
 /* Extra small devices (phones, 600px and down) */
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 768px) {
+    .warpper .content {
+        margin: 0.5rem 0.5rem;
+        /* background: #00ac64; */
+    }
     .ControlPanel {
         width: 100%;
         min-height: 10rem;
@@ -254,6 +258,7 @@ export default {
         background-color: #3365da;
         color: whitesmoke;
         border: none;
+        min-width: 5rem;
         outline: none;
         transition: all 0.3s ease-in-out;
         font-size: auto;
@@ -264,35 +269,31 @@ export default {
     }
 }
 
-/* Small devices (portrait tablets and large phones, 600px and up) */
-@media only screen and (min-width: 600px) {
-    .ControlPanel {
-        height: 100%;
-        width: 10rem;
-        flex: none;
-        background: rgb(51, 70, 153);
-    }
-    .ControlPanel button {
-        background-color: #3365da;
-        color: whitesmoke;
-        border: none;
-        outline: none;
-        transition: all 0.3s ease-in-out;
-        font-size: auto;
-        margin-top: 0.5rem;
-        width: 80%;
-        height: 3rem;
-        border-radius: 0.5rem;
-    }
-}
-
 /* Medium devices (landscape tablets, 768px and up) */
 @media only screen and (min-width: 768px) {
+    .warpper .content {
+        margin: 0.5rem 0.5rem;
+        /* background: #00ac64; */
+    }
+    .warpper .content p{
+        font-size: 0.9rem;
+    }
+    .warpper .content h1{
+        font-size: 1.7rem;
+    }
+    .warpper .content h2{
+        font-size: 1.2rem;
+    }
+    .warpper .content h4{
+        font-size: 0.9rem;
+    }
+
+
     .ControlPanel {
         height: 100%;
-        width: 12rem;
+        width: 16rem;
         flex: none;
-        background: rgb(255, 65, 198);
+        background: rebeccapurple;
     }
     .ControlPanel button {
         background-color: #3365da;
@@ -303,37 +304,17 @@ export default {
         font-size: auto;
         margin-top: 0.8rem;
         width: 80%;
-        height: 3rem;
-        font-size: 1rem;
-        border-radius: 0.5rem;
-    }
-}
-
-/* Large devices (laptops/desktops, 992px and up) */
-@media only screen and (min-width: 992px) {
-    .ControlPanel {
-        height: 100%;
-        width: 16rem;
-        flex: none;
-        background: rgb(153, 51, 51);
-        flex-direction: column;
-    }
-    .ControlPanel button {
-        background-color: #3365da;
-        color: whitesmoke;
-        border: none;
-        outline: none;
-        transition: all 0.3s ease-in-out;
+        height: 2rem;
         font-size: auto;
-        margin-top: 1rem;
-        width: 80%;
-        height: 3rem;
         border-radius: 0.5rem;
     }
 }
 
 /* Extra large devices (large laptops and desktops, 1200px and up) */
-@media only screen and (min-width: 1200px) {
+@media only screen and (min-width: 992px) {
+    .warpper .content {
+        margin: 2rem 2rem;
+    }
     .ControlPanel {
         height: 100%;
         width: 22rem;

@@ -29,7 +29,7 @@ export default {
     box-shadow: #2c2c2c 5px 5px 1rem;
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 992px) {
     #nav {
         padding: 0.7rem 0rem;
     }
@@ -46,28 +46,6 @@ export default {
     .top {
         width: 100%;
         height: 1.3rem;
-        flex: none;
-    }
-}
-
-@media only screen and (min-width: 600px) {
-    #nav {
-        padding: 1rem 0rem;
-    }
-
-    #nav a {
-        font-weight: bold;
-        color: white;
-        text-decoration: none;
-        padding: 0.6rem 2rem;
-        border-radius: 0.6rem;
-        margin: 0rem 1rem;
-        background: rgb(48, 45, 45);
-        transition: all 0.3s ease-in-out;
-    }
-    .top {
-        width: 100%;
-        height: 1.4rem;
         flex: none;
     }
 }

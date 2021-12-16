@@ -33,7 +33,7 @@ export default {
     flex-direction: column;
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 768px) {
     .col {
         width: 100%;
         flex: 1;
@@ -42,7 +42,7 @@ export default {
     }
 }
 
-@media only screen and (min-width: 600px) {
+@media only screen and (min-width: 768px) {
     .col {
         width: 100%;
         flex: 1;

@@ -27,6 +27,7 @@ p {
 
 h1,
 h2 {
+    margin: 0px 0px 0px 0px;
     color: #7fd496;
     text-align: left;
     border-bottom: solid;
@@ -35,6 +36,7 @@ h2 {
 h3,
 h4,
 h5 {
+    margin: 1rem 0px 0px 0px;
     color: #7fd496;
     text-align: left;
     border-left: solid;
