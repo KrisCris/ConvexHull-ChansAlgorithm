@@ -15,4 +15,13 @@ body{
   text-align: center;
   color: #2c3e50;
 }
+a {
+    text-decoration: none;
+    color: #13ffeb;
+}
+p {
+    color: #64ff8d;
+    font-weight: bold;
+    text-align: left;
+}
 </style>

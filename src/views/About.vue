@@ -4,31 +4,31 @@
         <h1>Description</h1>
         <p>
             This is my final project for the 
-            <a href="https://www.cse.wustl.edu/~taoju/cse546/">CSE546: Computational Geometry</a> 
+            <a target="_blank" rel="noopener noreferrer" href="https://www.cse.wustl.edu/~taoju/cse546/">CSE546: Computational Geometry</a> 
             course, taught by 
-            <a href="https://www.cse.wustl.edu/~taoju/">Professor Tao Ju</a>, 
+            <a target="_blank" rel="noopener noreferrer" href="https://www.cse.wustl.edu/~taoju/">Professor Tao Ju</a>, 
             at Washington University in St. Louis.
         </p>
         <p>
-            It demos <a href="https://en.wikipedia.org/wiki/Chan%27s_algorithm">Chan's Algorithm</a>,
+            It demos <a target="_blank" rel="noopener noreferrer" href="https://en.wikipedia.org/wiki/Chan%27s_algorithm">Chan's Algorithm</a>,
              an optimal output-sensitive algorithm computing the convex hull of a point set.
         </p>
         <h1>Developer</h1>
         <div class="devs">
-            <a href="https://github.com/KrisCris"><p>Pingchuan Huang</p></a>
+            <a target="_blank" rel="noopener noreferrer" href="https://github.com/KrisCris"><p>Pingchuan Huang</p></a>
             <p>Yong Chen</p>
         </div>
         <h1>Tools</h1>
         <div class="tools">
-            <a href="https://vuejs.org/"><p>Vue.js</p></a>
-            <a href="https://github.com/davidmerfield/randomColor"><p>randomColor</p></a>
+            <a target="_blank" rel="noopener noreferrer" href="https://vuejs.org/"><p>Vue.js</p></a>
+            <a target="_blank" rel="noopener noreferrer" href="https://github.com/davidmerfield/randomColor"><p>randomColor</p></a>
         </div>
         <h1>References</h1>
         <div class="refs">
-            <a href="https://sites.cs.ucsb.edu/~suri/cs235/ChanCH.pdf">
+            <a target="_blank" rel="noopener noreferrer" href="https://sites.cs.ucsb.edu/~suri/cs235/ChanCH.pdf">
                 <p>1. Chan, T.M. Optimal output-sensitive convex hull algorithms in two and three dimensions</p>
             </a>
-            <a href="http://www.cs.umd.edu/~mount/754/Lects/754lects.pdf">
+            <a target="_blank" rel="noopener noreferrer" href="http://www.cs.umd.edu/~mount/754/Lects/754lects.pdf">
                 <p>2. Dave Mount's Lecture Notes</p>
             </a>
         </div>
@@ -122,7 +122,7 @@ h5 {
 .about {
     margin: 2rem 5rem;
 }
-.about a {
+/* .about a {
     text-decoration: none;
     color: #13ffeb;
 }
@@ -130,6 +130,6 @@ h5 {
     color: #64ff8d;
     font-weight: bold;
     text-align: left;
-}
+} */
 
 </style>

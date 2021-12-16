@@ -24,12 +24,21 @@ export default createStore({
         groupedVertices: [],
         subHullEdges: [],
         fullHullEdges: [],
-        m:6
+        m: 6
     },
     // [commit] mutations
     // $store.commit('mutationName', {})
     mutations: {
+        nextStep(state) {
+            state.step += 1
+        },
+
+        prevStep(state) {
+            state.step -= 1
+        },
+
         addVertex(state, pos) {
+            if(state.step == 0) return
             state.rawVertices.push(new Vertex(pos.x, pos.y))
         },
 
@@ -66,21 +75,21 @@ export default createStore({
             state.subHullEdges = []
             let r = Math.ceil(inst.P.length / state.m)
             let colors = randomColor({ count: r })
-            for (let i = 0; i < r; i++){
-                for(let v of ret[0][i]){
+            for (let i = 0; i < r; i++) {
+                for (let v of ret[0][i]) {
                     v.color = colors[i]
                     state.rawVertices.push(v)
                 }
             }
-            for (let i = 0; i < r; i++){
-                for(let e of ret[1][i].edges){
+            for (let i = 0; i < r; i++) {
+                for (let e of ret[1][i].edges) {
                     e.color = colors[i]
                     state.subHullEdges.push(e)
                 }
             }
         },
-        
-        setM(state, val){
+
+        setM(state, val) {
             state.m = val
             console.log("boopm")
         }
@@ -91,6 +100,29 @@ export default createStore({
     // can access state but can't change state.
     // actions => commit mutation => change data
     actions: {
+        addPoints({ commit }, payload) {
+            function getRandomInt(min, max) {
+                min = Math.ceil(min);
+                max = Math.floor(max);
+                return Math.floor(Math.random() * (max - min)) + min;
+            }
+
+            let count = payload.number
+            let interval = setInterval(() => {
+                if (count > 0) {
+                    commit("addVertex", {
+                        x: getRandomInt(6, payload.maxX-5),
+                        y: getRandomInt(6, payload.maxY)
+                    })
+                    count--;
+                } else {
+                    clearInterval(interval)
+                }
+            }, 50)
+        },
+
+
+
         // doSomething(context){context.commit()}
         chans({ commit, state }) {
 
@@ -98,19 +130,19 @@ export default createStore({
             if (inst) {
                 // run Hull()
                 let ret = inst.Hull()
-                
+
                 state.subHullEdges = []
                 state.rawVertices = []
                 let colors = randomColor({ count: ret.r })
 
-                for (let i = 0; i < ret.r; i++){
-                    for(let v of ret.subP[i]){
+                for (let i = 0; i < ret.r; i++) {
+                    for (let v of ret.subP[i]) {
                         v.color = colors[i]
                         state.rawVertices.push(v)
                     }
                 }
-                for (let i = 0; i < ret.r; i++){
-                    for(let e of ret.subCH[i].edges){
+                for (let i = 0; i < ret.r; i++) {
+                    for (let e of ret.subCH[i].edges) {
                         e.color = colors[i]
                         state.subHullEdges.push(e)
                     }
@@ -127,21 +159,21 @@ export default createStore({
             let inst = Chans.getInstance(state.rawVertices);
             if (inst) {
                 // run Hull()
-                let r = Math.ceil(inst.P.length/state.m)
+                let r = Math.ceil(inst.P.length / state.m)
                 let ret = inst.mChans(state.m)
-                
+
                 state.subHullEdges = []
                 state.rawVertices = []
                 let colors = randomColor({ count: r })
 
-                for (let i = 0; i < r; i++){
-                    for(let v of ret.subP[i]){
+                for (let i = 0; i < r; i++) {
+                    for (let v of ret.subP[i]) {
                         v.color = colors[i]
                         state.rawVertices.push(v)
                     }
                 }
-                for (let i = 0; i < r; i++){
-                    for(let e of ret.subCH[i].edges){
+                for (let i = 0; i < r; i++) {
+                    for (let e of ret.subCH[i].edges) {
                         e.color = colors[i]
                         state.subHullEdges.push(e)
                     }
@@ -161,11 +193,11 @@ export default createStore({
         vertices(state) {
             switch (state.step) {
                 case 0: {
-                    return state.rawVertices
                     break
                 }
                 case 1: {
                     // do something
+                    return state.rawVertices
                     break
                 }
                 // case X...
@@ -185,11 +217,8 @@ export default createStore({
                 // case X...
             }
         },
-
-        color({ state }) {
-            return randomColor({ count: 1 })
-        }
     },
+
     // break state into multiple
     modules: {
 
