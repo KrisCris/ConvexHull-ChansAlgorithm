@@ -25,7 +25,7 @@
                 :x2="e.x1"
                 :y1="e.y0"
                 :y2="e.y1"
-                :style="{ stroke: 'white', 'stroke-width': 6 }"
+                :style="{ stroke: e.color, 'stroke-width': 4 }"
             ></line>
             <circle
                 v-for="v in vertices"

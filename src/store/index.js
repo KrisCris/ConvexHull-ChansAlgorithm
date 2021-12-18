@@ -23,7 +23,6 @@ export default createStore({
         round: 0,
         subStep: 0,
 
-
         // Geo Data
         rawVertices: [],
         rawResults: [],
@@ -83,7 +82,11 @@ export default createStore({
 
         setResults(state, results) {
             for (let res of results) {
-                res.colors = randomColor({ count: res.r })
+                res.colors = randomColor({
+                    count: res.r,
+                    luminosity: 'bright',
+                    // format: 'rgb'
+                })
             }
             state.rawResults = results
         },
@@ -242,7 +245,6 @@ export default createStore({
 
         jarvisMarch({ state, commit }) {
             commit("updateCanRun", false);
-            let mEdges = state.rawResults[state.round].JM.mEdges;
             let mScans = state.rawResults[state.round].JM.mScans;
             let mVertices = state.rawResults[state.round].JM.mVertices;
             state.fullHullEdges = []
@@ -257,13 +259,23 @@ export default createStore({
                 if (count > 0) {
                     let e = new Edge(mVertices[grp], mScans[grp][idx])
                     commit("setScanEdge", e)
-                    // the largest edge
-                    if (mScans[grp][idx] == mVertices[grp + 1]) {
+                    // init local largest angle edge
+                    if (idx == 0) {
+                        e.color = "#81FFC4"
                         commit("addFullHullEdge", e)
+                    } else {
+                        let lastPoint = (grp == 0) ? new Vertex(Number.MIN_SAFE_INTEGER, 0) : state.fullHullEdges[state.fullHullEdges.length - 2].begin
+                        let old = Vertex.degree(lastPoint, state.fullHullEdges[state.fullHullEdges.length - 1].begin, state.fullHullEdges[state.fullHullEdges.length - 1].end)
+                        let cur = Vertex.degree(lastPoint, e.begin, e.end)
+                        if (cur > old) {
+                            e.color = "#81FFC4"
+                            commit("replaceLastFullHullEdge", e)
+                        }
                     }
                     if (mScans[grp].length - 1 > idx) {
                         idx++
                     } else {
+                        state.fullHullEdges[state.fullHullEdges.length - 1].color = "white"
                         idx = 0
                         grp++
                     }
@@ -274,7 +286,7 @@ export default createStore({
                     commit("setScanEdge", undefined)
                     commit("updateCanRun", true)
                 }
-            }, 20)
+            }, 50)
 
             commit("nextSubStep")
         },
