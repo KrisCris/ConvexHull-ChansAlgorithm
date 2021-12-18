@@ -54,24 +54,27 @@
                         name="pointsNum"
                         id=""
                         v-model="pointsNum"
-                    />
-                    <button :disabled="!$store.state.canRun" @click="addPoints">
-                        Add {{ pointsNum }} Points
-                    </button>
-                    <button
-                        :disabled="!($store.state.canRun && enoughPoints)"
-                        class="green"
-                        @click="nextStep"
-                    >
-                        Next
-                    </button>
-                    <button
-                        :disabled="!$store.state.canRun"
-                        class="gray"
-                        @click="prevStep"
-                    >
-                        Prev
-                    </button>
+                    /><br>
+                    <div class="btnGroup">
+                        <button :disabled="!$store.state.canRun" @click="addPoints">
+                            Add {{ pointsNum }} Points
+                        </button>
+                        <button
+                            :disabled="!($store.state.canRun && enoughPoints)"
+                            class="green"
+                            @click="nextStep"
+                        >
+                            Next
+                        </button>
+                        <button
+                            :disabled="!$store.state.canRun"
+                            class="gray"
+                            @click="prevStep"
+                        >
+                            Prev
+                        </button>
+                    </div>
+                    
                 </div>
             </div>
         </div>
@@ -109,8 +112,10 @@
 
             <div class="controllor">
                 <div class="content">
-                    <button class="green" @click="nextStep">Demo</button>
-                    <button class="gray" @click="prevStep">Prev</button>
+                    <div class="btnGroup">
+                        <button class="green" @click="nextStep">Demo</button>
+                        <button class="gray" @click="prevStep">Prev</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -133,12 +138,16 @@
 
             <div class="controllor">
                 <div class="content">
-                    <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==0" class="green" @click="groupPoints">Group Points</button>
-                    <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==1" class="green" @click="grahamScan">Graham’s Scan</button>
-                    <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==2" class="green" @click="jarvisMarch">Jarvis’s March</button>
-                    <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==3 && !$store.state.rawResults[$store.state.round].isCompleted" class="green" @click="nextRound">Next Iteration</button>
-                    <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==3 && $store.state.rawResults[$store.state.round].isCompleted" @click="restart">Restart</button>
-                    <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==3 && $store.state.rawResults[$store.state.round].isCompleted" @click="nextStep" class="green">Try other m values</button>
+                    <div class="btnGroup">
+                        <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==0" class="green" @click="groupPoints">Group Points</button>
+                        <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==1" class="green" @click="grahamScan">Graham’s Scan</button>
+                        <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==2" class="green" @click="jarvisMarch">Jarvis’s March</button>
+                        <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==3 && !$store.state.rawResults[$store.state.round].isCompleted" class="green" @click="nextRound">Next Iteration</button>
+                        <button :disabled="!$store.state.canRun" v-if="!($store.state.subStep==3 && $store.state.rawResults[$store.state.round].isCompleted)" @click="auto">Auto</button>
+                        <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==3 && $store.state.rawResults[$store.state.round].isCompleted" @click="runAgain">Run it again</button>
+                        <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==3 && $store.state.rawResults[$store.state.round].isCompleted" @click="nextStep" class="green">Try other m values</button>
+                        <button :disabled="!$store.state.canRun" v-if="$store.state.subStep==3 && $store.state.rawResults[$store.state.round].isCompleted" @click="restart" class="gray">Home</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -148,7 +157,7 @@
                 <div class="content">
                     <h2>Extra. Playground</h2>
                     <p>
-                        Feel free to test your m values!
+                        Feel free to test more m values!
                     </p>
                 </div>
             </div>
@@ -246,16 +255,20 @@ export default {
         },
         mChans(){
             this.$store.dispatch("mChans")
+        },
+        auto() {
+            this.$store.dispatch("auto")
+        },
+        runAgain() {
+            this.$store.commit("prepRunAgain")
         }
     },
     computed: {
         m: {
             get() {
-                console.log("get");
                 return this.$store.state.m;
             },
             set(value) {
-                console.log("set");
                 this.$store.commit("setM", value);
             },
         },
@@ -297,6 +310,14 @@ export default {
 
 /* Extra small devices (phones, 600px and down) */
 @media only screen and (max-width: 768px) {
+    .btnGroup{
+        display:flex;
+        flex-flow: row;
+        justify-content: center
+    }
+    .gray{
+        order: -1;
+    }
     .warpper .content {
         margin: 0.5rem 0.5rem;
         /* background: #00ac64; */

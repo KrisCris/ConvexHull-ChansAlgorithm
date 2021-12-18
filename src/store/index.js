@@ -22,6 +22,7 @@ export default createStore({
         // which round of m is currently in
         round: 0,
         subStep: 0,
+        speed: 20,
 
         // Geo Data
         rawVertices: [],
@@ -35,6 +36,10 @@ export default createStore({
     // [commit] mutations
     // $store.commit('mutationName', {})
     mutations: {
+        setSpeed(state, val) {
+            state.speed = val
+        },
+
         updateStep(state, value) {
             state.step += value
         },
@@ -85,20 +90,32 @@ export default createStore({
                 res.colors = randomColor({
                     count: res.r,
                     luminosity: 'bright',
-                    // format: 'rgb'
+                    format: 'rgb'
                 })
             }
             state.rawResults = results
         },
 
-        nextRound(state) {
+        nextRound(state, callback = undefined) {
             for (let v of state.rawVertices) {
                 v.color = "#74ff99"
             }
             state.subStep = 0;
+            state.fullHullEdges = [];
+            state.subHullEdges = [];
             state.round += 1;
-            state.fullHullEdges = []
-            state.subHullEdges = []
+            if (callback) callback()
+
+        },
+
+        prepRunAgain(state, callback = undefined) {
+            for (let v of state.rawVertices) {
+                v.color = "#74ff99"
+            }
+            state.subStep = 0;
+            state.round = 0
+            state.fullHullEdges = [];
+            state.subHullEdges = [];
         },
 
         restart(state) {
@@ -177,7 +194,7 @@ export default createStore({
                     clearInterval(interval)
                     commit("updateCanRun", true)
                 }
-            }, 20)
+            }, state.speed)
         },
 
         computeChans({ state, commit }) {
@@ -207,11 +224,13 @@ export default createStore({
                     count--;
                 } else {
                     clearInterval(interval)
-                    if (callback) callback()
-                    commit("updateCanRun", true)
+                    commit("nextSubStep")
+                    if (callback)
+                        setTimeout(() => { callback() }, 500)
+                    else
+                        commit("updateCanRun", true)
                 }
-            }, 20)
-            commit("nextSubStep")
+            }, state.speed)
         },
 
         grahamScan({ state, commit }, callback = undefined) {
@@ -234,16 +253,16 @@ export default createStore({
                     count--;
                 } else {
                     clearInterval(interval)
-                    if (callback) callback()
-                    commit("updateCanRun", true)
+                    commit("nextSubStep")
+                    if (callback)
+                        setTimeout(() => { callback() }, 500)
+                    else
+                        commit("updateCanRun", true)
                 }
-            }, 20)
-
-            commit("nextSubStep")
-
+            }, state.speed)
         },
 
-        jarvisMarch({ state, commit }) {
+        jarvisMarch({ state, commit }, callback = undefined) {
             commit("updateCanRun", false);
             let mScans = state.rawResults[state.round].JM.mScans;
             let mVertices = state.rawResults[state.round].JM.mVertices;
@@ -252,7 +271,6 @@ export default createStore({
             for (let s of mScans) {
                 count += s.length
             }
-
             let grp = 0
             let idx = 0
             let interval = setInterval(() => {
@@ -284,11 +302,14 @@ export default createStore({
                 } else {
                     clearInterval(interval)
                     commit("setScanEdge", undefined)
-                    commit("updateCanRun", true)
+                    commit("nextSubStep")
+                    if (callback && state.rawResults.length - 1 > state.round) {
+                            setTimeout(() => { callback() }, 500)
+                    } else {
+                        commit("updateCanRun", true)
+                    }
                 }
-            }, 50)
-
-            commit("nextSubStep")
+            }, state.speed)
         },
 
         mChans({ commit, state, dispatch }) {
@@ -307,6 +328,27 @@ export default createStore({
                 alert("You have to add more dots!!!!");
             }
         },
+
+        auto({ commit, state, dispatch }, oneRound = false) {
+            switch (state.subStep) {
+                case 0: {
+                    dispatch("groupPoints", () => { dispatch('grahamScan', () => { dispatch('jarvisMarch', () => { commit('nextRound', () => { if (!oneRound) dispatch('auto', oneRound) }) }) }) })
+                    break
+                }
+                case 1: {
+                    dispatch('grahamScan', () => { dispatch('jarvisMarch', () => { commit('nextRound', () => { if (!oneRound) dispatch('auto', oneRound) }) }) })
+                    break
+                }
+                case 2: {
+                    dispatch('jarvisMarch', () => { commit('nextRound', () => { if (!oneRound) dispatch('auto', oneRound) }) })
+                    break
+                }
+                case 3: {
+                    commit('nextRound', () => { if (!oneRound) dispatch('auto', oneRound) })
+                    break
+                }
+            }
+        }
 
 
     },
