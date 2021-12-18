@@ -16,7 +16,7 @@
                 :x2="scanEdge.x1"
                 :y1="scanEdge.y0"
                 :y2="scanEdge.y1"
-                :style="{ stroke: 'white', 'stroke-width': 4 }"
+                :style="{ stroke: 'white', 'stroke-width': 2 }"
             ></line>
             <line
                 v-for="e in fullHullEdges"

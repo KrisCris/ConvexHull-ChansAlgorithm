@@ -3,6 +3,7 @@ import randomColor from 'randomcolor'
 import Vertex from "../util/Vertex.js";
 import Chans from "../util/Chans.js";
 import Edge from '../util/Edge.js';
+import sleep from '../util/util.js'
 
 export default createStore({
     // data
@@ -164,7 +165,7 @@ export default createStore({
         },
 
 
-        addPoints({ commit, state }, payload) {
+        async addPoints({ commit, state }, payload) {
             commit("updateCanRun", false)
             function getRandomInt(min, max) {
                 min = Math.ceil(min);
@@ -173,28 +174,24 @@ export default createStore({
             }
 
             let count = payload.number
-            let interval = setInterval(() => {
-                if (count > 0) {
-                    let len = state.rawVertices.length
+            while (count > 0) {
+                let len = state.rawVertices.length
+                commit("addVertex", {
+                    x: getRandomInt(6, payload.maxX - 5),
+                    y: getRandomInt(6, payload.maxY)
+                })
+                let len2 = state.rawVertices.length
+                while (len == len2) {
                     commit("addVertex", {
                         x: getRandomInt(6, payload.maxX - 5),
                         y: getRandomInt(6, payload.maxY)
                     })
-                    let len2 = state.rawVertices.length
-                    while (len == len2) {
-                        commit("addVertex", {
-                            x: getRandomInt(6, payload.maxX - 5),
-                            y: getRandomInt(6, payload.maxY)
-                        })
-                        len2 = state.rawVertices.length
-                    }
-
-                    count--;
-                } else {
-                    clearInterval(interval)
-                    commit("updateCanRun", true)
+                    len2 = state.rawVertices.length
                 }
-            }, state.speed)
+                await sleep(state.speed);
+                count--;
+            }
+            commit("updateCanRun", true)
         },
 
         computeChans({ state, commit }) {
@@ -206,63 +203,57 @@ export default createStore({
             }
         },
 
-        groupPoints({ state, commit }, callback = undefined) {
+        async groupPoints({ state, commit }, callback = undefined) {
             commit("updateCanRun", false)
             let count = state.rawResults[state.round].pLen
             let grp = 0
             let idx = 0
-            let interval = setInterval(() => {
-                if (count > 0) {
-                    let color = state.rawResults[state.round].colors[grp]
-                    state.rawResults[state.round].subP[grp][idx].color = color
-                    if (state.rawResults[state.round].subP[grp].length - 1 > idx) {
-                        idx++
-                    } else {
-                        idx = 0
-                        grp++
-                    }
-                    count--;
+            while (count > 0) {
+                let color = state.rawResults[state.round].colors[grp]
+                state.rawResults[state.round].subP[grp][idx].color = color
+                if (state.rawResults[state.round].subP[grp].length - 1 > idx) {
+                    idx++
                 } else {
-                    clearInterval(interval)
-                    commit("nextSubStep")
-                    if (callback)
-                        setTimeout(() => { callback() }, 500)
-                    else
-                        commit("updateCanRun", true)
+                    idx = 0
+                    grp++
                 }
-            }, state.speed)
+                count--;
+                await sleep(state.speed)
+            }
+            commit("nextSubStep")
+            if (callback)
+                setTimeout(() => { callback() }, 500)
+            else
+                commit("updateCanRun", true)
         },
 
-        grahamScan({ state, commit }, callback = undefined) {
+        async grahamScan({ state, commit }, callback = undefined) {
             commit("updateCanRun", false)
             let count = state.rawResults[state.round].edgeLen
             let grp = 0
             let idx = 0
             state.subHullEdges = []
-            let interval = setInterval(() => {
-                if (count > 0) {
-                    let color = state.rawResults[state.round].colors[grp]
-                    state.rawResults[state.round].subCH[grp].edges[idx].color = color
-                    commit("addEdge", state.rawResults[state.round].subCH[grp].edges[idx])
-                    if (state.rawResults[state.round].subCH[grp].edges.length - 1 > idx) {
-                        idx++
-                    } else {
-                        idx = 0
-                        grp++
-                    }
-                    count--;
+            while (count > 0) {
+                let color = state.rawResults[state.round].colors[grp]
+                state.rawResults[state.round].subCH[grp].edges[idx].color = color
+                commit("addEdge", state.rawResults[state.round].subCH[grp].edges[idx])
+                if (state.rawResults[state.round].subCH[grp].edges.length - 1 > idx) {
+                    idx++
                 } else {
-                    clearInterval(interval)
-                    commit("nextSubStep")
-                    if (callback)
-                        setTimeout(() => { callback() }, 500)
-                    else
-                        commit("updateCanRun", true)
+                    idx = 0
+                    grp++
                 }
-            }, state.speed)
+                count--;
+                await sleep(state.speed)
+            }
+            commit("nextSubStep")
+            if (callback)
+                setTimeout(() => { callback() }, 500)
+            else
+                commit("updateCanRun", true)
         },
 
-        jarvisMarch({ state, commit }, callback = undefined) {
+        async jarvisMarch({ state, commit }, callback = undefined) {
             commit("updateCanRun", false);
             let mScans = state.rawResults[state.round].JM.mScans;
             let mVertices = state.rawResults[state.round].JM.mVertices;
@@ -273,43 +264,39 @@ export default createStore({
             }
             let grp = 0
             let idx = 0
-            let interval = setInterval(() => {
-                if (count > 0) {
-                    let e = new Edge(mVertices[grp], mScans[grp][idx])
-                    commit("setScanEdge", e)
-                    // init local largest angle edge
-                    if (idx == 0) {
-                        e.color = "#81FFC4"
-                        commit("addFullHullEdge", e)
-                    } else {
-                        let lastPoint = (grp == 0) ? new Vertex(Number.MIN_SAFE_INTEGER, 0) : state.fullHullEdges[state.fullHullEdges.length - 2].begin
-                        let old = Vertex.degree(lastPoint, state.fullHullEdges[state.fullHullEdges.length - 1].begin, state.fullHullEdges[state.fullHullEdges.length - 1].end)
-                        let cur = Vertex.degree(lastPoint, e.begin, e.end)
-                        if (cur > old) {
-                            e.color = "#81FFC4"
-                            commit("replaceLastFullHullEdge", e)
-                        }
-                    }
-                    if (mScans[grp].length - 1 > idx) {
-                        idx++
-                    } else {
-                        state.fullHullEdges[state.fullHullEdges.length - 1].color = "white"
-                        idx = 0
-                        grp++
-                    }
-                    count--;
-
+            while (count > 0) {
+                let e = new Edge(mVertices[grp], mScans[grp][idx])
+                commit("setScanEdge", e)
+                // init local largest angle edge
+                if (idx == 0) {
+                    e.color = "#FF0051"
+                    commit("addFullHullEdge", e)
                 } else {
-                    clearInterval(interval)
-                    commit("setScanEdge", undefined)
-                    commit("nextSubStep")
-                    if (callback && state.rawResults.length - 1 > state.round) {
-                            setTimeout(() => { callback() }, 500)
-                    } else {
-                        commit("updateCanRun", true)
+                    let lastPoint = (grp == 0) ? new Vertex(Number.MIN_SAFE_INTEGER, 0) : state.fullHullEdges[state.fullHullEdges.length - 2].begin
+                    let old = Vertex.degree(lastPoint, state.fullHullEdges[state.fullHullEdges.length - 1].begin, state.fullHullEdges[state.fullHullEdges.length - 1].end)
+                    let cur = Vertex.degree(lastPoint, e.begin, e.end)
+                    if (cur > old) {
+                        e.color = "#FF0051"
+                        commit("replaceLastFullHullEdge", e)
                     }
                 }
-            }, state.speed)
+                if (mScans[grp].length - 1 > idx) {
+                    idx++
+                } else {
+                    state.fullHullEdges[state.fullHullEdges.length - 1].color = "white"
+                    idx = 0
+                    grp++
+                }
+                count--;
+                await sleep(state.speed)
+            }
+            commit("setScanEdge", undefined)
+            commit("nextSubStep")
+            if (callback && state.rawResults.length - 1 > state.round) {
+                setTimeout(() => { callback() }, 500)
+            } else {
+                commit("updateCanRun", true)
+            }
         },
 
         mChans({ commit, state, dispatch }) {

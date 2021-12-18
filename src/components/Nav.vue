@@ -5,8 +5,7 @@
         <a class="settingsBtn" href="#" @click="settings=!settings"><font-awesome-icon icon="cog" /></a>
         <div v-if="settings" class="settings" :style="{top:top()+'px', right:right()+'px'}">
             <p>Animation Speed ({{speed}} ms)</p>
-            <input type="range" v-model="speed" min="10" max="100" step="10" >
-            <p style="font-size:0.7rem; color:gray">Only apply before animation.</p>
+            <input type="range" v-model="speed" min="10" max="200" step="10" >
         </div>
     </div>
 </template>
@@ -27,11 +26,6 @@ export default {
             settings:false
         }
     },
-    // mounted(){
-    //     document.addEventListener('click',()=>{
-    //         this.settings = false
-    //     }, true)
-    // },
     computed:{
         speed: {
             get() {
@@ -66,7 +60,7 @@ export default {
     z-index:99;
     position:fixed;
     width: 14rem;
-    height:5rem;
+    height:4rem;
     background-color: rgb(48, 45, 45);
     border-radius: 1rem;
     padding-top: 1rem;
