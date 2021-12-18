@@ -26,14 +26,13 @@ export default {
 </script>
 
 <style>
-.row {
-    height: 100vh;
-    width: 100vw;
-    display: flex;
-    flex-direction: column;
-}
-
 @media only screen and (max-width: 768px) {
+    .row {
+        /* height: 100vh; */
+        width: 100vw;
+        display: flex;
+        flex-direction: column;
+    }
     .col {
         width: 100%;
         flex: 1;
@@ -43,6 +42,12 @@ export default {
 }
 
 @media only screen and (min-width: 768px) {
+    .row {
+        height: 100vh;
+        width: 100vw;
+        display: flex;
+        flex-direction: column;
+    }
     .col {
         width: 100%;
         flex: 1;

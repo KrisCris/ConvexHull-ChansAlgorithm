@@ -70,11 +70,22 @@ export default {
 </script>
 
 <style>
-.sketchpad {
-    height: 100%;
-    background-color: rgb(35, 39, 48);
-    flex: 1;
+@media only screen and (max-width: 768px) {
+    .sketchpad {
+        height: 60vh;
+        background-color: rgb(35, 39, 48);
+        flex: none;
+    }
 }
+
+@media only screen and (min-width: 768px) {
+    .sketchpad {
+        height: 100%;
+        background-color: rgb(35, 39, 48);
+        flex: 1;
+    }
+}
+
 circle {
     filter: brightness(75%);
 }

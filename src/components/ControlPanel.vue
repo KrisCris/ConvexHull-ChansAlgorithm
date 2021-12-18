@@ -308,7 +308,6 @@ export default {
     text-align: center;
 }
 
-/* Extra small devices (phones, 600px and down) */
 @media only screen and (max-width: 768px) {
     .btnGroup{
         display:flex;
@@ -320,7 +319,6 @@ export default {
     }
     .warpper .content {
         margin: 0.5rem 0.5rem;
-        /* background: #00ac64; */
     }
     .warpper .content .mSettings input{
         width:60%;
@@ -331,8 +329,8 @@ export default {
     }
     .ControlPanel {
         width: 100%;
-        min-height: 10rem;
-        flex: none;
+        padding-bottom: 4rem;
+        flex: 1;
         background: rgb(51, 153, 85);
     }
     .ControlPanel button {
@@ -344,13 +342,11 @@ export default {
         transition: all 0.3s ease-in-out;
         font-size: auto;
         margin: 0.5rem 0.2rem;
-        /* width: 90%; */
         height: 2rem;
         border-radius: 0.5rem;
     }
 }
 
-/* Medium devices (landscape tablets, 768px and up) */
 @media only screen and (min-width: 768px) {
     .warpper .content {
         margin: 0.5rem 0.5rem;
@@ -373,7 +369,6 @@ export default {
         margin-top: 2rem;
     }
 
-
     .ControlPanel {
         height: 100%;
         width: 16rem;
@@ -395,7 +390,6 @@ export default {
     }
 }
 
-/* Extra large devices (large laptops and desktops, 1200px and up) */
 @media only screen and (min-width: 992px) {
     .warpper .content {
         margin: 2rem 2rem;
