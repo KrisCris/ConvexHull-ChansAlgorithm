@@ -9,13 +9,13 @@ const routes = [
     component: About
   },
   {
-    path: '/ChansAlg',
+    path: '/',
     name: 'ChansAlg',
     component: ChansAlg
   },
   {
     path: '/:catchAll(.*)',
-    redirect: '/ChansAlg'
+    redirect: '/'
   },
 ]
 
