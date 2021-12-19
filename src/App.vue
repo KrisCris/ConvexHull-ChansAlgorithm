@@ -43,4 +43,11 @@ h5 {
     border-left: solid;
     padding-left: 0.5rem;
 }
+button{
+    box-shadow: #2b2b2b34 2px 2px 8px;
+}
+
+button:hover {
+    box-shadow: #2b2b2b91 2px 2px 8px;
+}
 </style>

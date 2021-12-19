@@ -332,6 +332,7 @@ export default {
         padding-bottom: 4rem;
         flex: 1;
         background: rgb(51, 153, 85);
+        box-shadow: 0px -5px 10px #1a1a1a;
     }
     .ControlPanel button {
         background-color: #3365da;
@@ -350,7 +351,6 @@ export default {
 @media only screen and (min-width: 768px) {
     .warpper .content {
         margin: 0.5rem 0.5rem;
-        /* background: #00ac64; */
     }
     .warpper .content p{
         font-size: 0.9rem;
@@ -374,6 +374,7 @@ export default {
         width: 16rem;
         flex: none;
         background: rebeccapurple;
+        box-shadow: -4px 5px 10px #161616;
     }
     .ControlPanel button {
         background-color: #3365da;
@@ -404,6 +405,8 @@ export default {
         width: 22rem;
         flex: none;
         background: rebeccapurple;
+        box-shadow: -4px 5px 10px #161616;
+        z-index:0;
     }
     .ControlPanel button {
         background-color: #3365da;

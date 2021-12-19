@@ -40,6 +40,11 @@ export default {
 </script>
 
 <style>
+.top {
+    box-shadow: 0px 5px 5px #141414;
+    z-index:1;
+}
+
 #nav span {
     color: white;
 }
@@ -53,7 +58,7 @@ export default {
 #nav a:hover {
     filter: brightness(120%);
     transition: all 0.3s ease-in-out;
-    box-shadow: #2c2c2c 5px 5px 1rem;
+    box-shadow: #2b2b2b 2px 2px 10px;
 }
 
 .settings{
@@ -102,7 +107,6 @@ export default {
     }
 }
 
-/* Large devices (laptops/desktops, 992px and up) */
 @media only screen and (min-width: 992px) {
     #nav {
         padding: 1.1rem 0rem;
@@ -125,7 +129,6 @@ export default {
     }
 }
 
-/* Extra large devices (large laptops and desktops, 1200px and up) */
 @media only screen and (min-width: 1200px) {
     #nav {
         padding: 1.5rem 0rem;
