@@ -4,7 +4,7 @@
 
 <style>
 body {
-    background: #1d2225;
+    background-image: linear-gradient(to right,rgb(33, 33, 33), rgb(36, 43, 70), rgb(81, 61, 117),rgb(130,88,186));
     margin: 0px auto;
     padding: 0px;
 }

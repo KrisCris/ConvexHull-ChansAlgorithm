@@ -403,7 +403,8 @@ export default {
         height: 100%;
         width: 22rem;
         flex: none;
-        background: rebeccapurple;
+        background-image: linear-gradient(to right, rgb(35, 39, 48), rgb(130,88,186));
+
     }
     .ControlPanel button {
         background-color: #3365da;
