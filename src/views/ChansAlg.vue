@@ -28,7 +28,7 @@ export default {
 <style>
 @media only screen and (max-width: 768px) {
     .row {
-        /* height: 100vh; */
+        height: 100vh;
         width: 100vw;
         display: flex;
         flex-direction: column;
