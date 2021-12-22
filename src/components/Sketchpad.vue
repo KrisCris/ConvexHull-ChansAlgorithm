@@ -86,9 +86,24 @@ export default {
     }
 }
 
+@keyframes newCircle {
+    from {
+        r: 0;
+    }
+    to {
+        r: 5;
+    }
+}
+
 circle {
     filter: brightness(75%);
+    animation: newCircle 0.2s linear;
 }
+
+line {
+    /* i don't know how to animate */
+}
+
 svg {
     position: relative;
     width: 100%;
