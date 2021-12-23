@@ -125,14 +125,14 @@
             <div class="description">
                 <div class="content">
                     <h2 v-if="$store.state.subStep<3">Step {{$store.state.subStep+1}}/3</h2>
-                    <h4 v-if="$store.state.subStep==0">The first step is dividing the points into groups each with the size of m.</h4>
-                    <p v-if="$store.state.subStep==0" >m = min(2<sup>2</sup><sup><sup>#iteration</sup></sup>, #points) = {{$store.state.rawResults[$store.state.round].m}}</p>
-                    <h4 v-if="$store.state.subStep==1">Now, we are going to compute the convex hull of each subset of points using Graham's Scan.</h4>
-                    <h4 v-if="$store.state.subStep==2">Starting from the up-most vertex in the plane, m number of convex edges will be computed using Jarvis’s March.</h4>
+                    <p v-if="$store.state.subStep==0">The first step is dividing the points into groups each with the size of m.</p>
+                    <p class="val" v-if="$store.state.subStep==0" >m = min(2<sup>2</sup><sup><sup>#iteration</sup></sup>, #points) = {{$store.state.rawResults[$store.state.round].m}}</p>
+                    <p v-if="$store.state.subStep==1">Now, we are going to compute the convex hull of each subset of points using Graham's Scan.</p>
+                    <p v-if="$store.state.subStep==2">Starting from the up-most vertex in the plane, m number of convex edges will be computed using Jarvis’s March.</p>
                     <h2 v-if="$store.state.subStep==3 && !$store.state.rawResults[$store.state.round].isCompleted">More Iterations Required</h2>
                     <h2 v-if="$store.state.subStep==3 && $store.state.rawResults[$store.state.round].isCompleted">Process Complete</h2>
-                    <h4 v-if="$store.state.subStep==3 && !$store.state.rawResults[$store.state.round].isCompleted">Oh no, m is too small! We need increase m in order to warp the entire shape!</h4>
-                    <h4 v-if="$store.state.subStep==3 && $store.state.rawResults[$store.state.round].isCompleted">The convex hull is successfully computed. Now, you can manually tweak the m value, or restart the demo!</h4>
+                    <p v-if="$store.state.subStep==3 && !$store.state.rawResults[$store.state.round].isCompleted">Oh no, m is too small! We need increase m in order to warp the entire shape!</p>
+                    <p v-if="$store.state.subStep==3 && $store.state.rawResults[$store.state.round].isCompleted">The convex hull is successfully computed. Now, you can manually tweak the m value, or restart the demo!</p>
                 </div>
             </div>
 
@@ -308,6 +308,13 @@ export default {
     text-align: center;
 }
 
+.val {
+    background-color: rgba(0, 0, 0, 0.164);
+    text-align: center;
+    padding: 0.25rem 0rem 0.5rem 0rem;
+    border-radius: 0.5rem;
+}
+
 @media only screen and (max-width: 768px) {
     .btnGroup{
         display:flex;
@@ -361,7 +368,7 @@ export default {
     .warpper .content h2{
         font-size: 1.2rem;
     }
-    .warpper .content h4{
+    .warpper .content p{
         font-size: 0.9rem;
     }
 
@@ -373,7 +380,7 @@ export default {
         height: 100%;
         width: 16rem;
         flex: none;
-        background: rebeccapurple;
+        background: rgb(51, 153, 85);
         box-shadow: -4px 5px 10px #161616;
     }
     .ControlPanel button {
@@ -404,7 +411,7 @@ export default {
         height: 100%;
         width: 22rem;
         flex: none;
-        background: rebeccapurple;
+        background: rgb(51, 153, 85);
         box-shadow: -4px 5px 10px #161616;
         z-index:0;
     }
