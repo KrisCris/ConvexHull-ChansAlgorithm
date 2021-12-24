@@ -71,7 +71,7 @@ export default class Chans {
         // update step.m
         this.steps[this.steps.length - 1].m = m
 
-        
+
         let L = this.PartialHull(m)
         return this.steps
     }
@@ -214,43 +214,37 @@ export default class Chans {
         return null;
     }
 
-    // P: the vertices list
-    // i: begin idx of the searching process
-    // j: end idx of the searching process
-    // a: first vertex of the edge
-    // b: second vertex of the edge
-    bSearch(P, i, j, a, b) {
-        if (i == j)
-            return P[i];
-        if (Vertex.degree(a, b, P[i]) > Vertex.degree(a, b, P[j])) {
-            // update step.subCH
-            this.steps[this.steps.length - 1].JM.mScans
-            if (Vertex.degree(a, b, P[Math.floor((i + j) / 2)]) < Vertex.degree(a, b, P[j]))
-                return this.bSearch(P, i, Math.floor((i + j) / 2), a, b);
-            else if (Vertex.degree(a, b, P[Math.floor((i + j) / 2 + 1)]) > Vertex.degree(a, b, P[Math.floor((i + j) / 2)]))
-                return this.bSearch(P, Math.floor((i + j) / 2) + 1, j, a, b);
-            else if (Vertex.degree(a, b, P[Math.floor((i + j) / 2 + 1)]) == Vertex.degree(a, b, P[Math.floor((i + j) / 2)]))
-                return P[Math.floor((i + j) / 2)];
-            else return this.bSearch(P, i, Math.floor((i + j) / 2), a, b);
-        }
-        else {
-            if (Vertex.degree(a, b, P[Math.floor((i + j) / 2)]) < Vertex.degree(a, b, P[j]))
-                return this.bSearch(P, Math.floor((i + j) / 2) + 1, j, a, b);
-            else if (Vertex.degree(a, b, P[Math.floor((i + j) / 2 + 1)]) > Vertex.degree(a, b, P[Math.floor((i + j) / 2)]))
-                return this.bSearch(P, Math.floor((i + j) / 2) + 1, j, a, b);
-            else if (Vertex.degree(a, b, P[Math.floor((i + j) / 2 + 1)]) == Vertex.degree(a, b, P[Math.floor((i + j) / 2)]))
-                return P[Math.floor((i + j) / 2)];
-            else return this.bSearch(P, i, Math.floor((i + j) / 2), a, b);
+    bSearch(P, begin, end, v1, v2) {
+        if (begin == end)
+            return P[begin];
+
+        let middle = (begin + end) >> 1;
+        if (Vertex.degree(v1, v2, P[begin]) > Vertex.degree(v1, v2, P[end])) {
+            if (Vertex.degree(v1, v2, P[middle]) < Vertex.degree(v1, v2, P[end]))
+                return this.bSearch(P, begin, middle, v1, v2);
+            else if (Vertex.degree(v1, v2, P[middle + 1]) > Vertex.degree(v1, v2, P[middle]))
+                return this.bSearch(P, middle + 1, end, v1, v2);
+            else if (Vertex.degree(v1, v2, P[middle + 1]) == Vertex.degree(v1, v2, P[middle]))
+                return P[middle];
+            else return this.bSearch(P, begin, middle, v1, v2);
+        } else {
+            if (Vertex.degree(v1, v2, P[middle]) < Vertex.degree(v1, v2, P[end]))
+                return this.bSearch(P, middle + 1, end, v1, v2);
+            else if (Vertex.degree(v1, v2, P[middle + 1]) > Vertex.degree(v1, v2, P[middle]))
+                return this.bSearch(P, middle + 1, end, v1, v2);
+            else if (Vertex.degree(v1, v2, P[middle + 1]) == Vertex.degree(v1, v2, P[middle]))
+                return P[middle];
+            else return this.bSearch(P, begin, middle, v1, v2);
         }
 
     };
 
-    lSearch(P, a, b) {
+    lSearch(P, v1, v2) {
         let max = undefined
         let maxAngle = Number.MIN_SAFE_INTEGER
         for (let v of P) {
-            if (Vertex.degree(a, b, v) >= maxAngle) {
-                maxAngle = Vertex.degree(a, b, v)
+            if (Vertex.degree(v1, v2, v) >= maxAngle) {
+                maxAngle = Vertex.degree(v1, v2, v)
                 max = v
             }
         }
