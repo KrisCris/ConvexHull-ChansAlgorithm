@@ -30,16 +30,8 @@
             <div class="description">
                 <div class="content">
                     <h2>1. Draw Some Points</h2>
-                    <p>
-                        Let's first add some points (more than 3) by simply clicking on the
-                        empty plane! Also, you are encouraged to randomly add as
-                        many points as possible.
-                    </p>
-                    <p>
-                        Or, you can adjust the number of points you want by
-                        dragging the bar below and click the button, we will
-                        generate points automatically for you.
-                    </p>
+                    <p>Let's first add some points (more than 3) by simply clicking on the empty plane!</p>
+                    <p>Or, you can let us add certain amount of points for you by dragging the bar below and click the button.</p>
                 </div>
             </div>
 
@@ -155,7 +147,7 @@
         <div v-if="$store.state.step == 4" class="warpper">
             <div class="description">
                 <div class="content">
-                    <h2>Extra. Playground</h2>
+                    <h2>The Playground</h2>
                     <p>
                         Feel free to test more m values!
                     </p>
@@ -213,7 +205,7 @@ export default {
     name: "ControlPanel",
     data() {
         return {
-            pointsNum: 50,
+            pointsNum: 20,
         };
     },
     methods: {
