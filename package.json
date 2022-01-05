@@ -10,7 +10,7 @@
     "@fortawesome/free-solid-svg-icons": "^5.15.4",
     "@fortawesome/vue-fontawesome": "^3.0.0-5",
     "core-js": "^3.6.5",
-    "randomcolor": "^0.6.2",
+    "distinct-colors": "^3.0.0",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0",
     "vuex": "^4.0.0-0"

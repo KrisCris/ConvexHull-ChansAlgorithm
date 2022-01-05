@@ -1,5 +1,5 @@
 import { createStore } from 'vuex'
-import randomColor from 'randomcolor'
+import distinctColors from 'distinct-colors'
 import Vertex from "../util/Vertex.js";
 import Chans from "../util/Chans.js";
 import Edge from '../util/Edge.js';
@@ -19,7 +19,7 @@ export default createStore({
         // 3: Try Demo
         step: 0,
         canRun: true,
-
+        
         // which round of m is currently in
         round: 0,
         subStep: 0,
@@ -88,18 +88,19 @@ export default createStore({
 
         setResults(state, results) {
             for (let res of results) {
-                res.colors = randomColor({
+                res.colors = distinctColors({
                     count: res.r,
-                    luminosity: 'bright',
-                    format: 'rgb'
-                })
+                    chromaMin: 50,
+                    lightMin: 45
+                });
+                console.log(res.colors)
             }
             state.rawResults = results
         },
 
         nextRound(state, callback = undefined) {
             for (let v of state.rawVertices) {
-                v.color = "#74ff99"
+                v.color = Vertex.DefaultColor
             }
             state.subStep = 0;
             state.fullHullEdges = [];
@@ -111,7 +112,7 @@ export default createStore({
 
         prepRunAgain(state, callback = undefined) {
             for (let v of state.rawVertices) {
-                v.color = "#74ff99"
+                v.color = Vertex.DefaultColor
             }
             state.subStep = 0;
             state.round = 0
@@ -145,7 +146,7 @@ export default createStore({
             }
             if (state.step == 3) {
                 for (let v of state.rawVertices) {
-                    v.color = "#74ff99"
+                    v.color = Vertex.DefaultColor
                 }
                 state.subStep = 0;
                 state.round = 0;
@@ -304,7 +305,7 @@ export default createStore({
             if (inst) {
                 commit("setResults", inst.mHull(state.m))
                 for (let v of state.rawVertices) {
-                    v.color = "#74ff99"
+                    v.color = Vertex.DefaultColor
                 }
                 state.fullHullEdges = []
                 state.subHullEdges = []

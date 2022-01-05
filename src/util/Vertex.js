@@ -1,10 +1,11 @@
 export default class Vertex {
+    static DefaultColor = "#74ff99";
     xPos;
     yPos;
     predecessor;
     color;
 
-    constructor(xPos, yPos, color="#74ff99") {
+    constructor(xPos, yPos, color=Vertex.DefaultColor) {
         this.xPos = xPos;
         this.yPos = yPos;
         this.color = color
