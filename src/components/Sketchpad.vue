@@ -32,7 +32,7 @@
                 :key="v"
                 :cx="v.xPos"
                 :cy="v.yPos"
-                r="5"
+                :r="v.getR()"
                 :style="{ fill: v.color }"
             ></circle>
         </svg>

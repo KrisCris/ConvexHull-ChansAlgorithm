@@ -11,6 +11,13 @@ export default class Vertex {
         this.color = color
     }
 
+    getR() {
+        if (this.color == Vertex.DefaultColor) {
+            return 5;
+        }
+        return 6;
+    }
+
     static xSort(v1, v2) {
         if (v1.xPos > v2.xPos) return 1;
         else if (v1.xPos < v2.xPos) return -1;
