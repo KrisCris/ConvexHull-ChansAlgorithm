@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import About from '../views/About.vue'
-import ChansAlg from '../views/ChansAlg.vue'
+import Chans from '../views/Chans.vue'
 
 const routes = [
   {
@@ -10,8 +10,8 @@ const routes = [
   },
   {
     path: '/',
-    name: 'ChansAlg',
-    component: ChansAlg
+    name: 'Chans',
+    component: Chans
   },
   {
     path: '/:catchAll(.*)',

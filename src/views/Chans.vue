@@ -15,7 +15,7 @@ import SketchPad from "../components/Sketchpad.vue";
 import ControlPanel from "../components/ControlPanel.vue";
 
 export default {
-    name: "ChansAlg",
+    name: "Chans",
     components: { Nav, SketchPad, ControlPanel },
     data() {
         return {};
