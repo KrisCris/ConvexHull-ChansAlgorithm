@@ -25,7 +25,7 @@
         <h1>Tools</h1>
         <div class="tools">
             <p><a target="_blank" rel="noopener noreferrer" href="https://vuejs.org/">Vue.js</a></p>
-            <a target="_blank" rel="noopener noreferrer" href="https://github.com/davidmerfield/randomColor"><p>randomColor</p></a>
+            <a target="_blank" rel="noopener noreferrer" href="https://github.com/internalfx/distinct-colors"><p>distinct-colors</p></a>
         </div>
         <h1>References</h1>
         <div class="refs">
