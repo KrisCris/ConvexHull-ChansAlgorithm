@@ -1,6 +1,6 @@
 <template>
     <div id="nav" class="top">
-        <router-link :to="{ name: 'ChansAlg' }">Chan's Algorithm</router-link>
+        <router-link :to="{ name: 'Chans' }">Chan's Algorithm</router-link>
         <router-link :to="{ name: 'About' }">About </router-link>
         <a class="settingsBtn" href="#" @click="settings=!settings"><font-awesome-icon icon="cog" /></a>
         <div v-if="settings" class="settings" :style="{top:top()+'px', right:right()+'px'}">

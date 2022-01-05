@@ -23,7 +23,7 @@ export default createStore({
         // which round of m is currently in
         round: 0,
         subStep: 0,
-        speed: 20,
+        speed: 40,
 
         // Geo Data
         rawVertices: [],
@@ -93,7 +93,6 @@ export default createStore({
                     chromaMin: 50,
                     lightMin: 45
                 });
-                console.log(res.colors)
             }
             state.rawResults = results
         },

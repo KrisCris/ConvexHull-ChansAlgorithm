@@ -16,6 +16,9 @@
                         output-sensitive algorithm to compute the convex hull of
                         a set points.
                     </p>
+                    <p>
+                        Note: You can change the animation speed in settings.
+                    </p>
                 </div>
             </div>
 
