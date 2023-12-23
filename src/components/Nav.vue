@@ -2,10 +2,10 @@
     <div id="nav" class="top">
         <router-link :to="{ name: 'Chans' }">Chan's Algorithm</router-link>
         <router-link :to="{ name: 'About' }">About </router-link>
-        <a class="settingsBtn" href="#" @click="settings=!settings"><font-awesome-icon icon="cog" /></a>
-        <div v-if="settings" class="settings" :style="{top:top()+'px', right:right()+'px'}">
-            <p>Animation Speed ({{speed}} ms)</p>
-            <input type="range" v-model="speed" min="10" max="200" step="10" >
+        <a id="settingsBtn" class="settingsBtn" href="#" @click="settings = !settings" v-if="isPadPage">&#x2699;</a>
+        <div id="settingsPanel" v-if="settings" class="settings" :style="{ top: top() + 'px', right: right() + 'px' }">
+            <p>Animation Duration ({{ speed }} ms)</p>
+            <input type="range" v-model="speed" min="10" max="200" step="10">
         </div>
     </div>
 </template>
@@ -13,20 +13,30 @@
 <script>
 export default {
     name: "Nav",
+    mounted() {
+        document.addEventListener('click', this.disableSettings);
+    },
     methods: {
-        top(){
-            return document.querySelector('#nav').clientHeight+5
+        top() {
+            return document.querySelector('#nav').clientHeight + 5
         },
-        right(){
-            return window.innerWidth - document.querySelector('.settingsBtn').offsetLeft - document.querySelector('.settingsBtn').offsetWidth/2
+        right() {
+            return window.innerWidth - document.querySelector('.settingsBtn').offsetLeft - document.querySelector('.settingsBtn').offsetWidth / 2
+        },
+        disableSettings(event) {
+            const settingsPanel = document.querySelector('#settingsPanel');
+            const settingsBtn = document.querySelector('#settingsBtn');
+            if (settingsPanel && !settingsPanel.contains(event.target) && !settingsBtn.contains(event.target)) {
+                this.settings = false;
+            }
         }
     },
-    data(){
+    data() {
         return {
-            settings:false
+            settings: false
         }
     },
-    computed:{
+    computed: {
         speed: {
             get() {
                 return this.$store.state.speed;
@@ -35,6 +45,9 @@ export default {
                 this.$store.commit("setSpeed", value);
             },
         },
+        isPadPage() {
+            return this.$route.name === "Chans";
+        },
     }
 };
 </script>
@@ -42,7 +55,21 @@ export default {
 <style>
 .top {
     box-shadow: 0px 5px 5px #141414;
-    z-index:1;
+    z-index: 1;
+}
+
+#nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* #nav * {
+    flex: 1;
+} */
+
+#nav a {
+    display: inline-block;
 }
 
 #nav span {
@@ -61,18 +88,27 @@ export default {
     box-shadow: #2b2b2b 2px 2px 10px;
 }
 
-.settings{
-    z-index:99;
-    position:fixed;
+#nav .settingsBtn {
+    flex-grow: 0;
+    flex-shrink: 0;
+}
+
+.settings {
+    padding: 10px;
+    z-index: 99;
+    position: fixed;
     width: 14rem;
-    height:4rem;
+    height: 4rem;
     background-color: rgb(48, 45, 45);
     border-radius: 1rem;
-    padding-top: 1rem;
     box-shadow: #2c2c2c 5px 5px 1rem;
-
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
 }
-.settings p{
+
+.settings p {
     color: white;
     text-align: center;
     margin: 0px;
@@ -80,16 +116,16 @@ export default {
     margin-bottom: 0.5rem;
 }
 
-.settings input{
-    margin: 0px;
+.settings input {
+    margin: 0.3rem;
     padding: 0px;
-    margin-bottom: 0.5rem;
 }
 
 @media only screen and (max-width: 992px) {
     #nav {
         padding: 0.7rem 0rem;
     }
+
     #nav a {
         font-weight: bold;
         color: white;
@@ -100,6 +136,7 @@ export default {
         background: rgb(48, 45, 45);
         transition: all 0.3s ease-in-out;
     }
+
     .top {
         width: 100%;
         height: 1.3rem;
@@ -122,6 +159,7 @@ export default {
         background: rgb(48, 45, 45);
         transition: all 0.3s ease-in-out;
     }
+
     .top {
         width: 100%;
         height: 1.35rem;
@@ -133,6 +171,7 @@ export default {
     #nav {
         padding: 1.5rem 0rem;
     }
+
     #nav a {
         font-weight: bold;
         color: white;
@@ -143,10 +182,10 @@ export default {
         background: rgb(48, 45, 45);
         transition: all 0.3s ease-in-out;
     }
+
     .top {
         width: 100%;
         height: 1.5rem;
         flex: none;
     }
-}
-</style>
+}</style>

@@ -21,7 +21,7 @@ export default {
         return {};
     },
 
-    mounted() {},
+    mounted() { },
 };
 </script>
 
@@ -33,6 +33,7 @@ export default {
         display: flex;
         flex-direction: column;
     }
+
     .col {
         width: 100%;
         flex: 1;
@@ -48,6 +49,7 @@ export default {
         display: flex;
         flex-direction: column;
     }
+
     .col {
         width: 100%;
         flex: 1;

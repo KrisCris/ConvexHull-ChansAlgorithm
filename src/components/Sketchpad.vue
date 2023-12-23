@@ -70,10 +70,13 @@ export default {
 </script>
 
 <style>
+.sketchpad {
+    background-color: rgb(35, 39, 48);
+}
+
 @media only screen and (max-width: 768px) {
     .sketchpad {
         height: 60vh;
-        background-color: rgb(35, 39, 48);
         flex: none;
     }
 }
@@ -81,7 +84,6 @@ export default {
 @media only screen and (min-width: 768px) {
     .sketchpad {
         height: 100%;
-        background-color: rgb(35, 39, 48);
         flex: 1;
     }
 }

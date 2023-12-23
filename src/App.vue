@@ -4,7 +4,7 @@
 
 <style>
 body {
-    background: #1d2225;
+    background: #1e1f22;
     margin: 0px auto;
     padding: 0px;
 }
@@ -16,10 +16,12 @@ body {
     text-align: center;
     color: #2c3e50;
 }
+
 a {
     text-decoration: none;
     color: #13ffeb;
 }
+
 p {
     color: #64ff8d;
     font-weight: bold;
@@ -43,11 +45,11 @@ h5 {
     border-left: solid;
     padding-left: 0.5rem;
 }
-button{
+
+button {
     box-shadow: #2b2b2b34 2px 2px 8px;
 }
 
 button:hover {
     box-shadow: #2b2b2b91 2px 2px 8px;
-}
-</style>
+}</style>

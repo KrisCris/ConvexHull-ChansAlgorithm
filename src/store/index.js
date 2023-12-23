@@ -19,7 +19,7 @@ export default createStore({
         // 3: Try Demo
         step: 0,
         canRun: true,
-        
+
         // which round of m is currently in
         round: 0,
         subStep: 0,
@@ -166,6 +166,7 @@ export default createStore({
 
 
         async addPoints({ commit, state }, payload) {
+            const points_radius = 5
             commit("updateCanRun", false)
             function getRandomInt(min, max) {
                 min = Math.ceil(min);
@@ -175,19 +176,10 @@ export default createStore({
 
             let count = payload.number
             while (count > 0) {
-                let len = state.rawVertices.length
                 commit("addVertex", {
-                    x: getRandomInt(6, payload.maxX - 5),
-                    y: getRandomInt(6, payload.maxY)
+                    x: getRandomInt(points_radius, payload.maxX - points_radius),
+                    y: getRandomInt(points_radius, payload.maxY - points_radius)
                 })
-                let len2 = state.rawVertices.length
-                while (len == len2) {
-                    commit("addVertex", {
-                        x: getRandomInt(6, payload.maxX - 5),
-                        y: getRandomInt(6, payload.maxY)
-                    })
-                    len2 = state.rawVertices.length
-                }
                 await sleep(state.speed);
                 count--;
             }
