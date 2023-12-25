@@ -1,7 +1,32 @@
 <template>
     <router-view />
 </template>
+<script>
+export default {
+    name: "App",
+    methods: {
+        resizeWatcher() {
+            clearTimeout(this.$store.state.resizeTimeoutId);
+            this.$store.state.resizeTimeoutId = setTimeout(() => {
+                const svg = document.getElementById("svg");
+                if (svg == undefined) {
+                    this.$store.state.resizeRequired = true;
+                    return;
+                }
+                const rect = svg.getBoundingClientRect()
+                this.$store.commit("updatePosition", { width: rect.width, height: rect.height });
+            }, 500)
+        }
+    },
+    mounted() {
+        window.addEventListener("resize", this.resizeWatcher);
+    },
 
+    unmounted() {
+        window.removeEventListener("resize", this.resizeWatcher);
+    }
+};
+</script>
 <style>
 body {
     background: #1e1f22;

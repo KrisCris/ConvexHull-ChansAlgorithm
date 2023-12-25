@@ -42,7 +42,7 @@
 <script>
 export default {
     name: "Sketchpad",
-
+    
     computed: {
         vertices() {
             return this.$store.getters.vertices;
@@ -65,7 +65,12 @@ export default {
             this.$store.commit("addVertex", { x: e.offsetX, y: e.offsetY });
         },
     },
-    mounted() {},
+    mounted() {
+        if (this.$store.state.resizeRequired) {
+            const rect = document.getElementById("svg").getBoundingClientRect();
+            this.$store.commit("updatePosition", { width: rect.width, height: rect.height });
+        }
+    },
 };
 </script>
 

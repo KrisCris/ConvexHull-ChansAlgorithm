@@ -1,5 +1,8 @@
 export default class Vertex {
     static DefaultColor = "#74ff99";
+    static DefaultR = 5;
+    static MaxR = 6;
+
     xPos;
     yPos;
     predecessor;
@@ -13,9 +16,9 @@ export default class Vertex {
 
     getR() {
         if (this.color == Vertex.DefaultColor) {
-            return 5;
+            return Vertex.DefaultR;
         }
-        return 6;
+        return Vertex.MaxR;
     }
 
     static xSort(v1, v2) {

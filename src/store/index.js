@@ -13,6 +13,12 @@ export default createStore({
     state: {
         // Progress Control
         drawable: true,
+        resizeTimeoutId: undefined,
+        resizeRequired: false,
+        // svgWidth: undefined,
+        // svgHeight: undefined,
+        svgPadding: Vertex.MaxR + 4,
+
         // 0: Welcome Page
         // 1: Draw Points
         // 2: Division on manipulate m and try demo
@@ -37,6 +43,37 @@ export default createStore({
     // [commit] mutations
     // $store.commit('mutationName', {})
     mutations: {
+        updatePosition(state, rect) {
+            // // option 1
+            // let widthScale = (rect.width - 2 * state.svgPadding)  / state.svgWidth;
+            // let heightScale = (rect.height - 2 * state.svgPadding) / state.svgHeight;
+
+            // state.rawVertices.forEach(point => {
+            //     point.xPos *= widthScale;
+            //     point.yPos *= heightScale;
+            // });
+
+            // state.svgWidth = rect.width;
+            // state.svgHeight = rect.height;
+
+            // option 2
+            if (state.rawVertices.length == 0) return;
+            let minX = state.rawVertices[0].xPos, maxX = state.rawVertices[0].xPos;
+            let minY = state.rawVertices[0].yPos, maxY = state.rawVertices[0].yPos;
+        
+            state.rawVertices.forEach(point => {
+                if (point.xPos < minX) minX = point.xPos;
+                if (point.xPos > maxX) maxX = point.xPos;
+                if (point.yPos < minY) minY = point.yPos;
+                if (point.yPos > maxY) maxY = point.yPos;
+            });
+
+            state.rawVertices.forEach(point => {
+                point.xPos = ((point.xPos - minX) / (maxX - minX)) * (rect.width - 2 * state.svgPadding) + state.svgPadding;
+                point.yPos = ((point.yPos - minY) / (maxY - minY)) * (rect.height - 2 * state.svgPadding) + state.svgPadding;
+            });
+        },
+
         setSpeed(state, val) {
             state.speed = val
         },
@@ -166,7 +203,6 @@ export default createStore({
 
 
         async addPoints({ commit, state }, payload) {
-            const points_radius = 5
             commit("updateCanRun", false)
             function getRandomInt(min, max) {
                 min = Math.ceil(min);
@@ -177,8 +213,8 @@ export default createStore({
             let count = payload.number
             while (count > 0) {
                 commit("addVertex", {
-                    x: getRandomInt(points_radius, payload.maxX - points_radius),
-                    y: getRandomInt(points_radius, payload.maxY - points_radius)
+                    x: getRandomInt(state.svgPadding, payload.maxX - state.svgPadding),
+                    y: getRandomInt(state.svgPadding, payload.maxY - state.svgPadding)
                 })
                 await sleep(state.speed);
                 count--;

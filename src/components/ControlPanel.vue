@@ -221,7 +221,6 @@ export default {
         },
 
         addPoints() {
-            document.getElementById("svg");
             this.$store.dispatch("addPoints", {
                 number: this.pointsNum,
                 maxX: document.getElementById("svg").clientWidth,
